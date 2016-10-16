@@ -5,12 +5,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ToDoItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+public class TodoItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     public TextView name;
     public ImageView checkMark;
     private ItemClickListener itemClickListener;
 
-    public ToDoItemHolder(View itemView) {
+    public TodoItemHolder(View itemView) {
         super(itemView);
         checkMark = (ImageView) itemView.findViewById(R.id.checkMark);
         name = (TextView) itemView.findViewById(R.id.name);

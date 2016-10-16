@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
-public class ToDoListDbHelper extends DatabaseHandler {
+public class TodoListDbHelper extends DatabaseHandler {
 
     public static class ToDoList implements BaseColumns {
         public static final String TABLE_NAME = "todo_data";
@@ -36,7 +36,7 @@ public class ToDoListDbHelper extends DatabaseHandler {
             ToDoList.COLUMN_NAME_DONE + " INTEGER DEFAULT 0" + COMMA_SEP +
             ToDoList.COLUMN_NMAE_SUBITEMS + " BLOB )";
 
-    public ToDoListDbHelper(Context context) {
+    public TodoListDbHelper(Context context) {
         super(context, DB_NAME, CREATE_ENTRIES, DB_VERSION);
     }
 
@@ -81,6 +81,10 @@ public class ToDoListDbHelper extends DatabaseHandler {
         // Which row to delete based on id
         String[] selectionArgs = {idx};
         super.deleteObject(ToDoList.TABLE_NAME, todoListCol, selectionArgs);
+    }
+
+    public void updateDone(String idx, boolean done) {
+
     }
 
 }
