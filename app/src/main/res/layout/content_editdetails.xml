@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/todo_details"
+    android:id="@+id/content_editdetails"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -11,26 +11,30 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/activity_editdetails"
+    tools:context="me.kainoseto.todo.ItemDetailActivity"
     android:theme="@android:style/Theme.Material"
     android:weightSum="1"
     android:orientation="vertical"
     android:background="@color/windowBackground">
 
-    <TextView
-        android:text="Name"
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/text_name"
-        android:layout_weight="0.13"
-        android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-        android:gravity="center" />
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/edit_name"
+        android:layout_weight="0.04"
+        android:hint="@string/item_name" />
 
-    <TextView
-        android:text="TextView"
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:layout_weight="0.38" />
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/edit_desc"
+        android:layout_weight="0.27"
+        android:hint="@string/item_desc" />
 
     <Switch
         android:text="@string/item_done"
