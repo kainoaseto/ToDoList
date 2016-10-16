@@ -1,9 +1,10 @@
-package me.kainoseto.todo;
+package me.kainoseto.todo.Database;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -25,6 +26,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         super(context, databaseName, null, dbVersion);
         DB_NAME = databaseName;
         SQL_CREATE_ENTRIES = entries;
+        getDatabase();
+        Log.d(LOG_TAG, "Databasehandler constructed");
     }
 
 
@@ -160,14 +163,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return contentList;
     }
 
+    @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_ENTRIES);
+        try {
+            db.execSQL(SQL_CREATE_ENTRIES);
+        } catch( SQLException e) {
+            e.printStackTrace();
+        }
+        Log.d(LOG_TAG, "=========================");
+        Log.d(LOG_TAG, "Created new DB");
     }
 
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // User should override!
+
     }
 
+    @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onDowngrade(db, oldVersion, newVersion);
     }

@@ -3,21 +3,25 @@ package me.kainoseto.todo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import java.util.ArrayList;
 
+import me.kainoseto.todo.Database.TodoListDbHelper;
+
 public class MainActivity extends AppCompatActivity {
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
     RecyclerView todoListView;
     TodoListAdapter listAdapter;
-    ArrayList<TodoItem> todoItems;
+    public ArrayList<TodoItem> todoItems;
+
+    public static TodoListDbHelper todoDbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +36,13 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-                Intent detailViewIntent = new Intent(getApplicationContext(), ItemDetailActivity.class);
-                detailViewIntent.putExtra("POSITION", "NEW");
+                Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
+                detailViewIntent.putExtra("NEW", true);
                 startActivity(detailViewIntent);
             }
         });
+
+        todoDbHelper = new TodoListDbHelper(getApplicationContext());
 
         todoItems = new ArrayList<>();
 
@@ -45,5 +51,6 @@ public class MainActivity extends AppCompatActivity {
         todoListView.setAdapter(listAdapter);
         todoListView.setLayoutManager(new LinearLayoutManager(this));
 
+        Log.d(LOG_TAG, "Main oncreate done");
     }
 }

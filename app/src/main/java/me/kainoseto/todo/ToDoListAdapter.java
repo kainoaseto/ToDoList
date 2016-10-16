@@ -6,11 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 
 import java.util.ArrayList;
-
-import static android.R.attr.data;
 
 /**
  * Created by Kainoa on 10/14/16.
@@ -53,7 +50,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> {
         holder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onItemClick(View view, int pos) {
-                Intent detailViewIntent = new Intent(context, ItemDetailActivity.class);
+                Intent detailViewIntent = new Intent(context, EditItemDetailActivity.class);
                 detailViewIntent.putExtra("POSITION", currentPosition);
 
                 context.startActivity(detailViewIntent);
