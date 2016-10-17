@@ -43,7 +43,11 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> {
         }
         holder.name.setText(fullName);
         fullDesc = todoItems.get(position).getDescription();
-        for (int i = 0; i < 30; i++) {
+        int len = 30;
+        if(fullDesc.length() < 30) {
+            len = fullDesc.length();
+        }
+        for (int i = 0; i < len; i++) {
             if(fullDesc.charAt(i) == '\n') {
                 fullDesc = fullDesc.substring(0, i-1);
                 fullDesc += "...";

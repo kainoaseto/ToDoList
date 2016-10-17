@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -16,6 +17,7 @@ import com.facebook.stetho.inspector.elements.ShadowDocument;
  */
 
 public class EditItemDetailActivity extends AppCompatActivity {
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private EditText nameEditText;
     private EditText descEditText;
     private Switch  doneSwitch;
@@ -64,7 +66,10 @@ public class EditItemDetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.d(LOG_TAG, "OnDestony");
         UpdateDB();
+        Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivity(detailViewIntent);
     }
 
     private void UpdateDB() {
