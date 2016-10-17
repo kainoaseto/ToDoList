@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -19,6 +20,8 @@ public class ItemDetailActivity extends AppCompatActivity {
     private TextView nameView;
     private TextView descriptionView;
     private Switch doneView;
+    private Button removeButton;
+    private Button editButton;
 
     private String name;
     private String description;
@@ -36,6 +39,8 @@ public class ItemDetailActivity extends AppCompatActivity {
         nameView = (TextView) findViewById(R.id.text_name);
         descriptionView = (TextView) findViewById(R.id.text_desc);
         doneView = (Switch) findViewById(R.id.switch_done_view);
+        removeButton = (Button) findViewById(R.id.removeTask);
+        editButton = (Button) findViewById(R.id.editButton);
 
         Intent intent = getIntent();
         Bundle intentData = intent.getExtras();
@@ -48,6 +53,29 @@ public class ItemDetailActivity extends AppCompatActivity {
         descriptionView.setText(description);
         doneView.setChecked(done);
 
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.todoDbHelper.removeToDoItem(idx);
+                Log.d(LOG_TAG, "REMOVED ITEM");
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        editButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
+                detailViewIntent.putExtra("NEW", false);
+                detailViewIntent.putExtra("NAME", name);
+                detailViewIntent.putExtra("DESC", description);
+                detailViewIntent.putExtra("DONE", done);
+                detailViewIntent.putExtra("POSITION", idx);
+                startActivity(detailViewIntent);
+            }
+        });
+
         toolbar.setTitle(name);
         setSupportActionBar(toolbar);
 
@@ -59,30 +87,4 @@ public class ItemDetailActivity extends AppCompatActivity {
             }
         });
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_edit) {
-            Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
-            detailViewIntent.putExtra("NEW", false);
-            detailViewIntent.putExtra("NAME", name);
-            detailViewIntent.putExtra("DESC", description);
-            detailViewIntent.putExtra("DONE", done);
-            detailViewIntent.putExtra("POSITION", idx);
-            startActivity(detailViewIntent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 }

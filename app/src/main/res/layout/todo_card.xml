@@ -21,9 +21,11 @@
             android:id="@+id/checkMark_card"
             android:minHeight="48dp"
             android:minWidth="48dp"
+
             android:layout_marginStart="26dp"
             android:layout_centerVertical="true"
-            android:layout_alignParentStart="true" />
+            android:layout_alignParentStart="true"
+            card_view:srcCompat="@drawable/ic_remove_circle_outline_white_48dp" />
 
         <TextView
             android:text="Name"

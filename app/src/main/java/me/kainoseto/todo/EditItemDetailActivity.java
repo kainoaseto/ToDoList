@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
 
-import me.kainoseto.todo.Database.TodoListDbHelper;
 
 /**
  * Created by Kainoa on 10/15/2016.
@@ -64,6 +63,19 @@ public class EditItemDetailActivity extends AppCompatActivity {
                 startActivity(detailViewIntent);
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(newItem) {
+            MainActivity.todoDbHelper.addToDoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
+        } else {
+            MainActivity.todoDbHelper.updateName(idx, nameEditText.getText().toString());
+            MainActivity.todoDbHelper.updateDesc(idx, descEditText.getText().toString());
+            MainActivity.todoDbHelper.updateDone(idx, doneSwitch.isChecked());
+        }
     }
 
 }

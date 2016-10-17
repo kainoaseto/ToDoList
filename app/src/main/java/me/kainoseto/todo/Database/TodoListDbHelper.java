@@ -83,14 +83,15 @@ public class TodoListDbHelper extends DatabaseHandler {
 
     protected boolean updateToDoItem(int idx, ContentValues values) {
         // Which row to update based on id
-        String[] selectionArgs = {String.valueOf(idx+1)};
-        Log.d(LOG_TAG, "ID: "+String.valueOf(idx+1));
+        String[] selectionArgs = {String.valueOf(idx)};
+        Log.d(LOG_TAG, "ID: "+String.valueOf(idx));
         return super.updateObject(TodoList.TABLE_NAME, "_id", selectionArgs, values);
     }
 
     public void removeToDoItem(int idx) {
         // Which row to delete based on id
         String[] selectionArgs = {Integer.toString(idx)};
+        Log.d(LOG_TAG, "ID: "+String.valueOf(idx));
         super.deleteObject(TodoList.TABLE_NAME, "_id", selectionArgs);
     }
 

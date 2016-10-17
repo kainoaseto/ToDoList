@@ -50,9 +50,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public boolean deleteObject(String tableName, String columnName, String[] selectionArgs) {
-        String selection = columnName + "= ?";
-        int rowsDeleted = getDatabase().delete(tableName, selection, selectionArgs);
-
+        String selection = columnName + " = ?";
+        int rowsDeleted = getDatabase().delete(tableName, "_id = ?", selectionArgs);
+        Log.d(LOG_TAG, "rowsDeleted: " + rowsDeleted);
         if (rowsDeleted > 0) {
             contentCacheNeedsUpdate = true;
         }

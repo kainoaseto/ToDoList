@@ -4,4 +4,6 @@
     <string name="item_name">Name</string>
     <string name="item_desc">Description</string>
     <string name="item_done">Complete</string>
+    <string name="item_remove">Remove</string>
+    <string name="item_edit">Edit</string>
 </resources>

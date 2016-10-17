@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         UpdateList();
     }
 
-    private void UpdateList() {
+    public void UpdateList() {
         todoItems.clear();
         todoDbHelper.getAllItems(todoItems);
         todoListView.setAdapter(listAdapter);
