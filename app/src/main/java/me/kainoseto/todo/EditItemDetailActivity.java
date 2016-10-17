@@ -51,6 +51,7 @@ public class EditItemDetailActivity extends AppCompatActivity {
             doneSwitch.setChecked(done);
         }
 
+        // TODO: Prevent saving of null data
         FloatingActionButton fab_save = (FloatingActionButton) findViewById(R.id.fab_saveitem);
         fab_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +67,6 @@ public class EditItemDetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(LOG_TAG, "OnDestony");
         UpdateDB();
         Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(detailViewIntent);
