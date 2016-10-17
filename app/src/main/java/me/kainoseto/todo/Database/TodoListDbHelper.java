@@ -19,10 +19,9 @@ public class TodoListDbHelper extends DatabaseHandler {
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_DESC = "desc";
         public static final String COLUMN_NAME_DONE = "done";
-        public static final String COLUMN_NMAE_SUBITEMS = "subitems";
     };
 
-    public static final int DB_VERSION = 9;
+    public static final int DB_VERSION = 10;
     public static final String DB_NAME = "todo_list.db";
     public static final String[] fullProjection = {
             TodoList.COLUMN_NAME_ID,
@@ -38,8 +37,7 @@ public class TodoListDbHelper extends DatabaseHandler {
             TodoList.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT " + COMMA_SEP +
             TodoList.COLUMN_NAME_NAME + " " + TEXT_TYPE + COMMA_SEP +
             TodoList.COLUMN_NAME_DESC + " " + TEXT_TYPE + COMMA_SEP +
-            TodoList.COLUMN_NAME_DONE + " INTEGER DEFAULT 0)";/* + COMMA_SEP +
-            TodoList.COLUMN_NMAE_SUBITEMS + " BLOB )";*/
+            TodoList.COLUMN_NAME_DONE + " INTEGER DEFAULT 0)";
 
     public TodoListDbHelper(Context context) {
         super(context, DB_NAME, CREATE_ENTRIES, DB_VERSION);
@@ -53,11 +51,6 @@ public class TodoListDbHelper extends DatabaseHandler {
 
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        /*if (DB_VERSION < 1) {
-            db.execSQL("ALTER TABLE" + TodoList.TABLE_NAME +
-                            " ADD COLUMN  " + TodoList.COLUMN_NAME_DONE + " INTEGER DEFAULT 0");
-        }*/
-
         db.execSQL(DELETE_ENTRIES);
         onCreate(db);
         Log.d(LOG_TAG, "Deleted table");

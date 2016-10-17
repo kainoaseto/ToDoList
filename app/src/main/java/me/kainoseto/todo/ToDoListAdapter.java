@@ -12,17 +12,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-/**
- * Created by Kainoa on 10/14/16.
- */
-
 public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
     private Context context;
     private ArrayList<TodoItem> todoItems;
     private LayoutInflater layoutInflater;
 
-    private int idx;
     private String fullName;
     private String fullDesc;
     private int lastPosition;
@@ -88,14 +83,6 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> {
 
                 context.startActivity(detailViewIntent);
             }
-
-            // TODO: Get this working
-            @Override
-            public boolean onLongItemClick(View view, int pos) {
-                Log.d(LOG_TAG, "OnLongItemClick");
-                notifyItemRemoved(pos);
-                return true;
-            }
         });
 
         holder.checkMark.setOnClickListener(new View.OnClickListener() {
@@ -117,15 +104,5 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> {
     @Override
     public int getItemCount() {
         return todoItems.size();
-    }
-
-    public void notifyNewItem(int position, TodoItem item) {
-        todoItems.add(position, item);
-        notifyItemInserted(position);
-    }
-
-    public void notifyRemoveItem(int position) {
-        todoItems.remove(position);
-        notifyItemRemoved(position);
     }
 }

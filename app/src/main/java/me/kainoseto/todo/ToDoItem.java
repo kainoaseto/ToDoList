@@ -9,16 +9,12 @@ public class TodoItem {
     private String name;
     private String description;
     private boolean done;
-    private int imageId;
-    // TODO: Setup dynamic subitems storage
-    // private CheckboxObject subitems;
 
     public TodoItem(int idx, String name, String description, boolean done) {
         this.idx = idx;
         this.name = name;
         this.description = description;
         this.done = done;
-        this.imageId = imageId;
     }
 
     public boolean isDone() {
@@ -52,13 +48,5 @@ public class TodoItem {
 
     public void setIdx(int idx) {
         this.idx = idx;
-    }
-
-    public int getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
     }
 }

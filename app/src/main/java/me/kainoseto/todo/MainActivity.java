@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // This is populated only on the first run so initialize our online debugger for sqlite
         if(todoDbHelper == null) {
             Stetho.newInitializerBuilder(this)
                     .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
@@ -62,12 +63,10 @@ public class MainActivity extends AppCompatActivity {
         todoListView.setLayoutManager(new LinearLayoutManager(this));
 
         UpdateList();
-        Log.d(LOG_TAG, "onCreate()");
     }
 
     @Override
     protected void onResume() {
-        Log.d(LOG_TAG, "OnResume()");
         super.onResume();
         UpdateList();
     }

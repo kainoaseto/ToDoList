@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class TodoItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+public class TodoItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     public TextView name;
     public ImageView checkMark;
     public TextView description;
@@ -22,13 +22,6 @@ public class TodoItemHolder extends RecyclerView.ViewHolder implements View.OnCl
     @Override
     public void onClick(View v) {
         this.itemClickListener.onItemClick(v, getLayoutPosition());
-    }
-
-    // TODO: Get this working
-    @Override
-    public boolean onLongClick(View v) {
-        this.itemClickListener.onLongItemClick(v, getLayoutPosition());
-        return true;
     }
 
     public void setItemClickListener(ItemClickListener listener) {

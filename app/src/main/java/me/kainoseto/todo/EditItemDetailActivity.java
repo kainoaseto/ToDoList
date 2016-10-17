@@ -8,9 +8,11 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
 
+import com.facebook.stetho.inspector.elements.ShadowDocument;
+
 
 /**
- * Created by Kainoa on 10/15/2016.
+ * Created by Kainoa.
  */
 
 public class EditItemDetailActivity extends AppCompatActivity {
@@ -51,13 +53,7 @@ public class EditItemDetailActivity extends AppCompatActivity {
         fab_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(newItem) {
-                    MainActivity.todoDbHelper.addToDoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
-                } else {
-                    MainActivity.todoDbHelper.updateName(idx, nameEditText.getText().toString());
-                    MainActivity.todoDbHelper.updateDesc(idx, descEditText.getText().toString());
-                    MainActivity.todoDbHelper.updateDone(idx, doneSwitch.isChecked());
-                }
+                UpdateDB();
 
                 Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(detailViewIntent);
@@ -68,7 +64,10 @@ public class EditItemDetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        UpdateDB();
+    }
 
+    private void UpdateDB() {
         if(newItem) {
             MainActivity.todoDbHelper.addToDoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
         } else {
