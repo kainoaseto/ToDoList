@@ -6,4 +6,6 @@
     <string name="item_done">Complete</string>
     <string name="item_remove">Remove</string>
     <string name="item_edit">Edit</string>
+    <string name="item_fail_to_save">Failed to save - task name cannot be empty</string>
+
 </resources>

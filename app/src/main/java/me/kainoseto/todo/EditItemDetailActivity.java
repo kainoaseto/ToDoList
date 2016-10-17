@@ -3,6 +3,7 @@ package me.kainoseto.todo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -51,15 +52,16 @@ public class EditItemDetailActivity extends AppCompatActivity {
             doneSwitch.setChecked(done);
         }
 
-        // TODO: Prevent saving of null data
+
+
         FloatingActionButton fab_save = (FloatingActionButton) findViewById(R.id.fab_saveitem);
         fab_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UpdateDB();
-
-                Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(detailViewIntent);
+                if(UpdateDB()) {
+                    Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(detailViewIntent);
+                }
             }
         });
     }
@@ -67,19 +69,31 @@ public class EditItemDetailActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        UpdateDB();
+        if (!UpdateDB()) {
+            Snackbar.make(null, R.string.item_fail_to_save, Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
         Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(detailViewIntent);
     }
 
-    private void UpdateDB() {
+    private boolean UpdateDB() {
         if(newItem) {
             MainActivity.todoDbHelper.addToDoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
         } else {
-            MainActivity.todoDbHelper.updateName(idx, nameEditText.getText().toString());
+            if(!nameEditText.getText().equals("")) {
+                 Snackbar.make(null, R.string.item_fail_to_save, Snackbar.LENGTH_LONG)
+                          .setAction("Action", null).show();
+                 return false;
+            } else {
+                MainActivity.todoDbHelper.updateName(idx, nameEditText.getText().toString());
+            }
+
             MainActivity.todoDbHelper.updateDesc(idx, descEditText.getText().toString());
             MainActivity.todoDbHelper.updateDone(idx, doneSwitch.isChecked());
         }
+
+        return true;
     }
 
 }
