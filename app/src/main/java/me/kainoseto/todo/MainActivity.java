@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 
+import com.facebook.stetho.Stetho;
+
 import java.util.ArrayList;
 
 import me.kainoseto.todo.Database.TodoListDbHelper;
@@ -19,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView todoListView;
     TodoListAdapter listAdapter;
-    public ArrayList<TodoItem> todoItems;
+    ArrayList<TodoItem> todoItems;
 
     public static TodoListDbHelper todoDbHelper;
 
@@ -30,19 +32,27 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-       FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_additem);
+        if(todoDbHelper == null) {
+            Stetho.newInitializerBuilder(this)
+                    .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                    .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                    .build();
+            Stetho.initializeWithDefaults(this);
+        }
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_additem);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
                 Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
                 detailViewIntent.putExtra("NEW", true);
                 startActivity(detailViewIntent);
             }
         });
 
-        todoDbHelper = new TodoListDbHelper(getApplicationContext());
+        if( todoDbHelper == null) {
+            todoDbHelper = new TodoListDbHelper(getApplicationContext());
+        }
 
         todoItems = new ArrayList<>();
 
@@ -51,6 +61,20 @@ public class MainActivity extends AppCompatActivity {
         todoListView.setAdapter(listAdapter);
         todoListView.setLayoutManager(new LinearLayoutManager(this));
 
-        Log.d(LOG_TAG, "Main oncreate done");
+        UpdateList();
+        Log.d(LOG_TAG, "onCreate()");
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(LOG_TAG, "OnResume()");
+        super.onResume();
+        UpdateList();
+    }
+
+    private void UpdateList() {
+        todoItems.clear();
+        todoDbHelper.getAllItems(todoItems);
+        todoListView.setAdapter(listAdapter);
     }
 }

@@ -24,8 +24,6 @@ public class EditItemDetailActivity extends AppCompatActivity {
     private int idx;
     private boolean newItem;
 
-    private TodoListDbHelper dbHelper;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,18 +48,16 @@ public class EditItemDetailActivity extends AppCompatActivity {
             doneSwitch.setChecked(done);
         }
 
-        dbHelper = new TodoListDbHelper(this);
-
         FloatingActionButton fab_save = (FloatingActionButton) findViewById(R.id.fab_saveitem);
         fab_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(newItem) {
-                    dbHelper.addToDoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
+                    MainActivity.todoDbHelper.addToDoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
                 } else {
-                    dbHelper.updateName(idx, nameEditText.getText().toString());
-                    dbHelper.updateDesc(idx, descEditText.getText().toString());
-                    dbHelper.updateDone(idx, doneSwitch.isChecked());
+                    MainActivity.todoDbHelper.updateName(idx, nameEditText.getText().toString());
+                    MainActivity.todoDbHelper.updateDesc(idx, descEditText.getText().toString());
+                    MainActivity.todoDbHelper.updateDone(idx, doneSwitch.isChecked());
                 }
 
                 Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);

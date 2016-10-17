@@ -2,34 +2,52 @@
 <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/todoCard"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="100dp"
     card_view:cardCornerRadius="5dp"
     android:layout_margin="5dp"
+    card_view:cardBackgroundColor="@color/cardBackground"
     >
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         >
 
         <ImageView
-            android:layout_margin="7dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/checkMark"
-            />
-
+            android:id="@+id/checkMark_card"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
+            android:layout_marginStart="26dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true" />
 
         <TextView
+            android:text="Name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/name"
-            android:layout_marginLeft="10dp"
-            android:layout_gravity="center_horizontal"/>
+            android:id="@+id/name_card"
+            android:textSize="30dp"
+            android:layout_above="@+id/description_card"
+            android:layout_toEndOf="@+id/checkMark_card"
+            android:layout_marginStart="44dp"
+            android:layout_marginBottom="9dp"
+            android:textColor="#FFFFFF"/>
 
-    </LinearLayout>
+        <TextView
+            android:text="Description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/description_card"
+            android:layout_alignBottom="@+id/checkMark_card"
+            android:layout_alignStart="@+id/name_card"
+            android:textColor="#FFFFFF"/>
+
+
+    </RelativeLayout>
 
 
 </android.support.v7.widget.CardView>

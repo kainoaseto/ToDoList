@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#FF00DDFF</color>
     <color name="windowBackground">#303030</color>
+    <color name="cardBackground">#424242</color>
 </resources>

@@ -27,7 +27,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         DB_NAME = databaseName;
         SQL_CREATE_ENTRIES = entries;
         getDatabase();
-        Log.d(LOG_TAG, "Databasehandler constructed");
     }
 
 
@@ -51,7 +50,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public boolean deleteObject(String tableName, String columnName, String[] selectionArgs) {
-        String selection = columnName + " = ?";
+        String selection = columnName + "= ?";
         int rowsDeleted = getDatabase().delete(tableName, selection, selectionArgs);
 
         if (rowsDeleted > 0) {
@@ -62,23 +61,22 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public boolean updateObject(String tableName, String columnName, String[] selectionArgs, ContentValues values) {
         String selection = columnName + " = ?";
-        int rowsUpdate = getDatabase().update(tableName, values, selection, selectionArgs);
-
-        if (rowsUpdate > 0) {
+        int rowsUpdated = getDatabase().update(tableName, values, "_id = ?", selectionArgs);
+        Log.d(LOG_TAG, "Rowsupdated: " + rowsUpdated);
+        if (rowsUpdated > 0) {
             contentCacheNeedsUpdate = true;
         }
 
-        return (rowsUpdate > 0);
+        return (rowsUpdated > 0);
     }
 
     public long getRowCount(String tableName) {
         return DatabaseUtils.queryNumEntries(getDatabase(), tableName);
     }
 
-
     public boolean containsObject(String tableName, String columnName, String[] selectionArgs,
                                   String orderBy, String[] projection) {
-        String selection = columnName + " = ?";
+        String selection = columnName + "= ?";
         Cursor cursor = getDatabase().query(
                 tableName,      // The table to query
                 projection,     // The columns to return
@@ -95,7 +93,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     public int getCount(String tableName, String columnName, String[] selectionArgs, String[] projection) {
-        String selection = columnName + " = ?";
+        String selection = columnName + "= ?";
         Cursor cursor = getDatabase().query(
                 tableName,      // The table to query
                 projection,     // The columns to return
@@ -113,7 +111,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public ContentValues getContent(String tableName, String columnname, String[] selectionArgs,
                                     String[] projection, String orderBy) {
-        String selection = columnname + " = ?";
+        String selection = columnname + "= ?";
         Cursor cursor = getDatabase().query(
                 tableName,      // The table to query
                 projection,     // The columns to return
@@ -155,10 +153,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         while (!cursor.isAfterLast()) {
             contentList.add(this.getValuesFromCursor(cursor, projection));
+            cursor.moveToNext();
         }
 
         cursor.close();
         contentCache = new ArrayList<>(contentList);
+
         contentCacheNeedsUpdate = false;
         return contentList;
     }
@@ -172,6 +172,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         Log.d(LOG_TAG, "=========================");
         Log.d(LOG_TAG, "Created new DB");
+        Log.d(LOG_TAG, "=========================");
     }
 
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -185,11 +186,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public ContentValues getValuesFromCursor(Cursor cursor, String[] projections) {
         ContentValues content = new ContentValues();
-        int index = 0;
 
         for (String proj : projections) {
+            int index;
             try {
-                index = cursor.getColumnIndex(proj);
+                index = cursor.getColumnIndexOrThrow(proj);
             } catch(IllegalArgumentException e) {
                 Log.w(LOG_TAG, "Error getting object form cursor");
                 continue;
@@ -216,7 +217,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
                     Log.w(LOG_TAG, "Unknown type in getting values from cursor!");
             }
         }
-
         return content;
     }
 

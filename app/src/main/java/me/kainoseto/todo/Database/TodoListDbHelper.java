@@ -15,21 +15,20 @@ public class TodoListDbHelper extends DatabaseHandler {
     private static final String LOG_TAG = "TodoListDbHelper";
     public static class TodoList implements BaseColumns {
         public static final String TABLE_NAME = "todo_data";
-        public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_ID = "_id";
         public static final String COLUMN_NAME_NAME = "name";
         public static final String COLUMN_NAME_DESC = "desc";
         public static final String COLUMN_NAME_DONE = "done";
         public static final String COLUMN_NMAE_SUBITEMS = "subitems";
     };
 
-    public static final int DB_VERSION = 4;
+    public static final int DB_VERSION = 9;
     public static final String DB_NAME = "todo_list.db";
     public static final String[] fullProjection = {
             TodoList.COLUMN_NAME_ID,
             TodoList.COLUMN_NAME_NAME,
             TodoList.COLUMN_NAME_DESC,
-            TodoList.COLUMN_NAME_DONE,
-            TodoList.COLUMN_NMAE_SUBITEMS
+            TodoList.COLUMN_NAME_DONE
     };
 
     private static final String TEXT_TYPE = "TEXT";
@@ -37,10 +36,10 @@ public class TodoListDbHelper extends DatabaseHandler {
     private static final String DELETE_ENTRIES = "DROP TABLE IF EXISTS " + TodoList.TABLE_NAME;
     private static final String CREATE_ENTRIES = "CREATE TABLE " + TodoList.TABLE_NAME + "(" +
             TodoList.COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT " + COMMA_SEP +
-            TodoList.COLUMN_NAME_NAME + TEXT_TYPE + COMMA_SEP +
-            TodoList.COLUMN_NAME_DESC + TEXT_TYPE + COMMA_SEP +
-            TodoList.COLUMN_NAME_DONE + " INTEGER DEFAULT 0" + COMMA_SEP +
-            TodoList.COLUMN_NMAE_SUBITEMS + " BLOB )";
+            TodoList.COLUMN_NAME_NAME + " " + TEXT_TYPE + COMMA_SEP +
+            TodoList.COLUMN_NAME_DESC + " " + TEXT_TYPE + COMMA_SEP +
+            TodoList.COLUMN_NAME_DONE + " INTEGER DEFAULT 0)";/* + COMMA_SEP +
+            TodoList.COLUMN_NMAE_SUBITEMS + " BLOB )";*/
 
     public TodoListDbHelper(Context context) {
         super(context, DB_NAME, CREATE_ENTRIES, DB_VERSION);
@@ -82,44 +81,45 @@ public class TodoListDbHelper extends DatabaseHandler {
         super.insertValues(TodoList.TABLE_NAME, item);
     }
 
-    protected void updateToDoItem(int idx, ContentValues values) {
+    protected boolean updateToDoItem(int idx, ContentValues values) {
         // Which row to update based on id
-        String[] selectionArgs = {Integer.toString(idx)};
-        super.updateObject(TodoList.TABLE_NAME, "id", selectionArgs, values);
+        String[] selectionArgs = {String.valueOf(idx+1)};
+        Log.d(LOG_TAG, "ID: "+String.valueOf(idx+1));
+        return super.updateObject(TodoList.TABLE_NAME, "_id", selectionArgs, values);
     }
 
     public void removeToDoItem(int idx) {
         // Which row to delete based on id
         String[] selectionArgs = {Integer.toString(idx)};
-        super.deleteObject(TodoList.TABLE_NAME, "id", selectionArgs);
+        super.deleteObject(TodoList.TABLE_NAME, "_id", selectionArgs);
     }
 
-    public void updateName(int idx, String name) {
+    public boolean updateName(int idx, String name) {
         ContentValues cv = new ContentValues();
         cv.put(TodoList.COLUMN_NAME_NAME, name);
-        updateToDoItem(idx, cv);
+        return updateToDoItem(idx, cv);
     }
 
-    public void updateDesc(int idx, String desc) {
+    public boolean updateDesc(int idx, String desc) {
         ContentValues cv = new ContentValues();
         cv.put(TodoList.COLUMN_NAME_DESC, desc);
-        updateToDoItem(idx, cv);
+        return updateToDoItem(idx, cv);
     }
 
-    public void updateDone(int idx, boolean done) {
+    public boolean updateDone(int idx, boolean done) {
         ContentValues cv = new ContentValues();
         cv.put(TodoList.COLUMN_NAME_DONE, done ? 1 : 0);
-        updateToDoItem(idx, cv);
+        return updateToDoItem(idx, cv);
     }
 
-    public ArrayList<TodoItem> getAllContent() {
+    public void getAllItems(ArrayList<TodoItem> items) {
         ArrayList<ContentValues> data = super.getAllContent(TodoList.TABLE_NAME, fullProjection);
-        ArrayList<TodoItem> items = new ArrayList<>();
+        if(data == null || data.size() < 1) {
+            return;
+        }
         for (ContentValues item : data) {
-            TodoItem newItem = new TodoItem(item.getAsInteger("id"), item.getAsString("name"), item.getAsString("desc"), item.getAsBoolean("done"));
+            TodoItem newItem = new TodoItem(item.getAsInteger("_id"), item.getAsString("name"), item.getAsString("desc"), item.getAsBoolean("done"));
             items.add(newItem);
         }
-
-        return items;
     }
 }

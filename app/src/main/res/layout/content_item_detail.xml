@@ -27,19 +27,19 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Headline"
         android:gravity="center" />
 
-    <TextView
-        android:text="TextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView2"
-        android:layout_weight="0.38" />
-
     <Switch
         android:text="@string/item_done"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/switch_done"
+        android:id="@+id/switch_done_view"
         android:layout_weight="0.08"
         android:textSize="18sp" />
+
+    <TextView
+        android:text="Description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_desc"
+        android:layout_weight="0.38" />
 
 </LinearLayout>
