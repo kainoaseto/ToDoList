@@ -37,11 +37,21 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> {
     @Override
     public void onBindViewHolder(TodoItemHolder holder, final int position) {
         fullName = todoItems.get(position).getName();
+
+        /*
+         If the name is longer than 15 chars then add '...' to the end so it doesn't mess up
+         the views and go off the screen
+          */
         if(fullName.length() > 15) {
             fullName = fullName.substring(0, 15);
             fullName += "...";
         }
         holder.name.setText(fullName);
+
+        /*
+         If the decsiption is too long or is a block description add '...' to the end so it
+         doesn't mess up the title or any other views
+         */
         fullDesc = todoItems.get(position).getDescription();
         int len = 30;
         if(fullDesc.length() < 30) {
@@ -79,6 +89,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> {
         holder.setItemClickListener(new ItemClickListener() {
             @Override
             public void onItemClick(View view, int pos) {
+                Log.d(LOG_TAG, "Pos: " + pos + " position: " + position + " currentPosition: " + currentPosition);
                 Intent detailViewIntent = new Intent(context, ItemDetailActivity.class);
                 detailViewIntent.putExtra("NAME", currentItem.getName());
                 detailViewIntent.putExtra("DESC", currentItem.getDescription());

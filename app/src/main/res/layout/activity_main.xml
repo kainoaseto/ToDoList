@@ -12,15 +12,27 @@
     <android.support.design.widget.AppBarLayout
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/DarkTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            android:theme="@android:style/Theme.Material" />
+            app:popupTheme="@style/DarkTheme.PopupOverlay"
+            android:theme="@android:style/Theme.Material">
+
+            <ImageButton
+                android:id="@+id/settings_toolbar_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                app:srcCompat="@android:drawable/ic_menu_preferences"
+                android:layout_weight="1"
+                android:padding="15dp"
+                android:background="@android:color/transparent"/>
+
+            </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 

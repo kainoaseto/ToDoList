@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.facebook.stetho.Stetho;
 
@@ -22,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView todoListView;
     TodoListAdapter listAdapter;
     ArrayList<TodoItem> todoItems;
-
+    public static final int SETTINGS_INTENT_RESULT_KEY = 4001;
     public static TodoListDbHelper todoDbHelper;
 
     @Override
@@ -48,6 +49,15 @@ public class MainActivity extends AppCompatActivity {
                 Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
                 detailViewIntent.putExtra("NEW", true);
                 startActivity(detailViewIntent);
+            }
+        });
+
+        ImageButton settingsBtn = (ImageButton) findViewById(R.id.settings_toolbar_button);
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent settingsViewIntent = new Intent(getApplicationContext(), SettingsActivity.class);
+                startActivityForResult(settingsViewIntent, SETTINGS_INTENT_RESULT_KEY);
             }
         });
 

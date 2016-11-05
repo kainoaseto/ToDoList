@@ -8,6 +8,13 @@
     android:fitsSystemWindows="true"
     tools:context="me.kainoseto.todo.EditItemDetailActivity">
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:theme="@style/DarkTheme.AppBarOverlay">
+
+    </android.support.design.widget.AppBarLayout>
+
     <include layout="@layout/content_editdetails"
         android:id="@+id/include" />
 

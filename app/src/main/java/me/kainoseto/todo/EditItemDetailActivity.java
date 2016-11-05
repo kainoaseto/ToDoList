@@ -66,6 +66,10 @@ public class EditItemDetailActivity extends AppCompatActivity {
         });
     }
 
+
+    // TODO: Override finally to save on back button press
+    // Or ultimately add a save button to the top actionbar
+
     @Override
     protected void onDestroy() {
         super.onDestroy();

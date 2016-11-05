@@ -4,10 +4,6 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.support.v7.widget.RecyclerView;
 
-/**
- * Created by Kainoa on 10/15/2016.
- */
-
 public class AnimationUtil {
     public static void animate(RecyclerView.ViewHolder holder, boolean down) {
         AnimatorSet animatorSet = new AnimatorSet();
