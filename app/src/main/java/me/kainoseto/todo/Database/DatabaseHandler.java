@@ -40,6 +40,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return writeableDatabase;
     }
 
+    public void InvalidateCache() {
+        contentCacheNeedsUpdate = true;
+    }
+
     /*
         Insert content into a table in the database
      */

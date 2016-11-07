@@ -107,8 +107,12 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> {
                 MainActivity.todoDbHelper.updateDone(currentItem.getIdx(), !isDone);
                 currentItem.setDone(!currentItem.isDone());
                 if(isDone) {
+                    AnimationUtil.checkAnimate((ImageView) v, true);
                     ((ImageView) v).setImageResource(R.drawable.ic_remove_circle_outline_white_48dp);
+
+
                 } else {
+                    AnimationUtil.checkAnimate((ImageView) v, true);
                     ((ImageView) v).setImageResource(R.drawable.ic_check_circle_white_48dp);
                 }
             }

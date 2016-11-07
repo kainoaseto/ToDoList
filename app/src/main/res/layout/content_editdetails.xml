@@ -15,8 +15,7 @@
     tools:context="me.kainoseto.todo.EditItemDetailActivity"
     android:theme="@android:style/Theme.Material"
     android:weightSum="1"
-    android:orientation="vertical"
-    android:background="@color/windowBackground">
+    android:orientation="vertical">
 
     <EditText
         android:layout_width="match_parent"

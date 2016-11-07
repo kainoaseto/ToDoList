@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Να κάνω</string>
+    <string name="action_edit">Επεξεργασία</string>
+    <string name="item_desc">Περιγραφή</string>
+    <string name="item_done">Πλήρης</string>
+    <string name="item_edit">Επεξεργασία</string>
+    <string name="item_fail_to_save">Αποτυχία να αποθηκεύσετε - όνομα της εργασίας δεν μπορεί να είναι κενό</string>
+    <string name="item_name">Όνομα</string>
+    <string name="item_remove">Αφαιρώ</string>
+    <string name="pref_default_list_name">Να κάνω</string>
+    <string name="pref_description_light_theme">Ενεργοποιεί το θέμα φως για την εφαρμογή</string>
+    <string name="reset_app_toast">επαναφορά εφαρμογή</string>
+    <string name="title_activity_settings">Ρυθμίσεις</string>
+    <string name="pref_title_reset">επαναφορά εφαρμογή</string>
+    <string name="pref_header_data_sync">συγχρονισμό δεδομένων</string>
+    <string name="pref_header_general">Γενικός</string>
+    <string name="pref_header_notifications">Ειδοποιήσεις</string>
+    <string name="pref_ringtone_silent">Σιωπηλός</string>
+    <string name="pref_title_light_theme">Ενεργοποίηση Φως Θέμα</string>
+    <string name="pref_title_list_name">Λίστα ονομάτων</string>
+    <string name="pref_title_new_message_notifications">Νέες ειδοποιήσεις μηνυμάτων</string>
+    <string name="cd_checkmark">ολοκληρωμένη εργασία</string>
+    <string name="cd_additem">Πρόσθεσε είδος</string>
+    <string name="cd_settings">Ρυθμίσεις</string>
+</resources>

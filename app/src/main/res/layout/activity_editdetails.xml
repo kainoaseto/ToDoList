@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="me.kainoseto.todo.EditItemDetailActivity">
+    android:id="@+id/activity_edit_detail"
+    tools:context="me.kainoseto.todo.EditItemDetailActivity"
+    android:background="@color/windowBackground">
 
     <android.support.design.widget.AppBarLayout
         android:layout_height="wrap_content"
@@ -25,7 +27,7 @@
         android:layout_gravity="top|left"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@drawable/ic_save_white_48dp"
-        app:backgroundTint="@android:color/holo_blue_bright"
+        app:backgroundTint="@color/colorAccent"
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="bottom|right" />
 

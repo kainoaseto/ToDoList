@@ -56,6 +56,14 @@ public class TodoListDbHelper extends DatabaseHandler {
         Log.d(LOG_TAG, "Deleted table");
     }
 
+    public void Reset() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.execSQL(DELETE_ENTRIES);
+        onCreate(db);
+        InvalidateCache();
+        Log.d(LOG_TAG, "Reset DB");
+    }
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onDowngrade(db, oldVersion, newVersion);

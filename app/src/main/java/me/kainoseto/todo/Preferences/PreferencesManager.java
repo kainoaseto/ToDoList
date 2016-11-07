@@ -18,8 +18,8 @@ public class PreferencesManager
     public static final int PRIVATE_MODE     = 0;
 
     // Keys should always be defined here for reference
-    public static final String KEY_LISTNAME              = "listname";
-    public static final String KEY_THEME                 = "theme";
+    public static final String KEY_LISTNAME              = "list_name_pref";
+    public static final String KEY_THEME                 = "light_theme_pref";
     public static final String KEY_MAINPREFS             = "main_prefs";
 
     public PreferencesManager(Context context)
@@ -31,6 +31,11 @@ public class PreferencesManager
     {
         sharedPref = _context.getSharedPreferences(prefName, mode);
         editor = sharedPref.edit();
+        editor.commit();
+    }
+
+    public SharedPreferences getSharedPref() {
+        return sharedPref;
     }
 
     public void storeValue(String prefName, int mode, String key, String var)
@@ -59,6 +64,19 @@ public class PreferencesManager
         editor.commit();
     }
 
+    public void storeValue(String prefName, int mode, String key, boolean var)
+    {
+        // prefName should be the preferences you are trying to store something in
+        // the key is the keyvalue that will be referenced with the value being stored
+        // Mode should almost always be 0 for private but the option is there to change
+        // references the sharedPreferances based on the prefName Parameter and
+        // stores a integer.
+        sharedPref = _context.getSharedPreferences(prefName, mode);
+        editor = sharedPref.edit();
+        editor.putBoolean(key, var);
+        editor.commit();
+    }
+
     public String getStoredString(String prefName, int mode, String key)
     {
         sharedPref = _context.getSharedPreferences(prefName, mode);
@@ -66,8 +84,7 @@ public class PreferencesManager
 
         try
         {
-            String storedValue = sharedPref.getString(key, null);
-            return storedValue;
+            return  sharedPref.getString(key, null);
         }
         catch(NullPointerException e)
         {
@@ -84,8 +101,7 @@ public class PreferencesManager
 
         try
         {
-            int storedValue = sharedPref.getInt(key, 0);
-            return storedValue;
+            return sharedPref.getInt(key, 0);
         }
         catch(NullPointerException e)
         {

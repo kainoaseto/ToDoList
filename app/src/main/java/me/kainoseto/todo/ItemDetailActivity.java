@@ -2,8 +2,10 @@ package me.kainoseto.todo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +16,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import me.kainoseto.todo.Preferences.PreferencesManager;
 
 public class ItemDetailActivity extends AppCompatActivity {
 
@@ -30,10 +34,19 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
+    CoordinatorLayout cl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(MainActivity.preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false)) {
+            setTheme(R.style.LightTheme_NoActionBar);
+        } else {
+            setTheme(R.style.DarkTheme_NoActionBar);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         nameView = (TextView) findViewById(R.id.text_name);
