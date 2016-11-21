@@ -1,4 +1,4 @@
-package me.kainoseto.todo;
+package me.kainoseto.todo.UI;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,35 +8,45 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> {
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+import me.kainoseto.todo.AnimationUtil;
+import me.kainoseto.todo.ItemClickListener;
+import me.kainoseto.todo.ItemDetailActivity;
+import me.kainoseto.todo.MainActivity;
+import me.kainoseto.todo.R;
+
+public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder>
+{
+    private static final String LOG_TAG = TodoListAdapter.class.getSimpleName();
+
     private Context context;
     private ArrayList<TodoItem> todoItems;
     private LayoutInflater layoutInflater;
 
-    private String fullName;
-    private String fullDesc;
     private int lastPosition;
 
-    public TodoListAdapter(Context context, ArrayList<TodoItem> data) {
+    public TodoListAdapter(Context context, ArrayList<TodoItem> data)
+    {
         this.context = context;
         this.todoItems = data;
         this.layoutInflater = LayoutInflater.from(context);
     }
 
     @Override
-    public TodoItemHolder onCreateViewHolder(ViewGroup parent, int position) {
+    public TodoItemHolder onCreateViewHolder(ViewGroup parent, int position)
+    {
         View view = layoutInflater.inflate(R.layout.todo_card, parent, false);
        return new TodoItemHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(TodoItemHolder holder, final int position) {
-        fullName = todoItems.get(position).getName();
+    public void onBindViewHolder(TodoItemHolder holder, final int position)
+    {
+        final TodoItem currentItem = todoItems.get(position);
+        String fullName = currentItem.getName();
+        String fullDesc = currentItem.getDescription();
 
         /*
          If the name is longer than 15 chars then add '...' to the end so it doesn't mess up
@@ -49,75 +59,72 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> {
         holder.name.setText(fullName);
 
         /*
-         If the decsiption is too long or is a block description add '...' to the end so it
+         If the description is too long or is a block description add '...' to the end so it
          doesn't mess up the title or any other views
          */
-        fullDesc = todoItems.get(position).getDescription();
         int len = 30;
         if(fullDesc.length() < 30) {
             len = fullDesc.length();
         }
-        for (int i = 0; i < len; i++) {
-            if(fullDesc.charAt(i) == '\n') {
+        for (int i = 0; i < len; i++)
+        {
+            if(fullDesc.charAt(i) == '\n')
+            {
                 fullDesc = fullDesc.substring(0, i-1);
                 fullDesc += "...";
                 break;
             }
         }
 
-        if(fullDesc.length() > 30) {
+        if(fullDesc.length() > 30)
+        {
             fullDesc = fullDesc.substring(0, 30);
             fullDesc += "...";
         }
 
         holder.description.setText(fullDesc);
 
-        if(todoItems.get(position).isDone()) {
+        if(todoItems.get(position).isDone())
             holder.checkMark.setImageResource(R.drawable.ic_check_circle_white_48dp);
-        }
 
         if (position > lastPosition) {
             AnimationUtil.animate(holder, true);
         } else {
             AnimationUtil.animate(holder, false);
         }
-
         lastPosition = position;
-        final int currentPosition = position;
-        final TodoItem currentItem = todoItems.get(currentPosition);
 
-        holder.setItemClickListener(new ItemClickListener() {
+        holder.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onItemClick(View view, int pos) {
-                Log.d(LOG_TAG, "Pos: " + pos + " position: " + position + " currentPosition: " + currentPosition);
+            public void onClick(View view)
+            {
                 Intent detailViewIntent = new Intent(context, ItemDetailActivity.class);
-                detailViewIntent.putExtra("NAME", currentItem.getName());
-                detailViewIntent.putExtra("DESC", currentItem.getDescription());
-                detailViewIntent.putExtra("DONE", currentItem.isDone());
-                detailViewIntent.putExtra("POSITION", currentItem.getIdx());
-
+                detailViewIntent.putExtra(context.getString(R.string.idx), currentItem.getIdx());
                 context.startActivity(detailViewIntent);
             }
         });
 
-        holder.checkMark.setOnClickListener(new View.OnClickListener() {
+        holder.checkMark.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 boolean isDone = currentItem.isDone();
                 MainActivity.todoDbHelper.updateDone(currentItem.getIdx(), !isDone);
-                currentItem.setDone(!currentItem.isDone());
-                if(isDone) {
-                    AnimationUtil.checkAnimate((ImageView) v, true);
+                currentItem.setDone(!isDone);
+
+                AnimationUtil.checkAnimate((ImageView) v, true);
+                if(isDone)
+                {
                     ((ImageView) v).setImageResource(R.drawable.ic_remove_circle_outline_white_48dp);
-
-
-                } else {
-                    AnimationUtil.checkAnimate((ImageView) v, true);
+                }
+                else
+                {
                     ((ImageView) v).setImageResource(R.drawable.ic_check_circle_white_48dp);
                 }
             }
         });
-
     }
 
     @Override

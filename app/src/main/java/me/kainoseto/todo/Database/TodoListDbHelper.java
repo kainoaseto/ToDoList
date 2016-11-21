@@ -8,8 +8,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import me.kainoseto.todo.MainActivity;
-import me.kainoseto.todo.TodoItem;
+import me.kainoseto.todo.UI.TodoItem;
 
 public class TodoListDbHelper extends DatabaseHandler {
     private static final String LOG_TAG = "TodoListDbHelper";
