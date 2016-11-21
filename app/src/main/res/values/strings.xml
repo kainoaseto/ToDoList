@@ -9,6 +9,9 @@
     <string name="item_fail_to_save">Failed to save - task name cannot be empty</string>
     <string name="title_activity_settings">Settings</string>
 
+    <!-- Strings related to intent passing -->
+    <string name="idx">todo_item_index</string>
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

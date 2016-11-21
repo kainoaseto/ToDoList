@@ -1,16 +1,18 @@
-package me.kainoseto.todo;
+package me.kainoseto.todo.UI;
 
 /**
  * Created by Kainoa on 10/14/16.
  */
 
-public class TodoItem {
+public class TodoItem
+{
     private int idx;
     private String name;
     private String description;
     private boolean done;
 
-    public TodoItem(int idx, String name, String description, boolean done) {
+    public TodoItem(int idx, String name, String description, boolean done)
+    {
         this.idx = idx;
         this.name = name;
         this.description = description;
@@ -41,10 +43,7 @@ public class TodoItem {
         this.name = name;
     }
 
-    public int getIdx() {
-
-        return idx;
-    }
+    public int getIdx() { return idx; }
 
     public void setIdx(int idx) {
         this.idx = idx;

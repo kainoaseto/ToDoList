@@ -1,7 +1,6 @@
 package me.kainoseto.todo;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -10,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -20,6 +18,8 @@ import java.util.ArrayList;
 
 import me.kainoseto.todo.Database.TodoListDbHelper;
 import me.kainoseto.todo.Preferences.PreferencesManager;
+import me.kainoseto.todo.UI.TodoItem;
+import me.kainoseto.todo.UI.TodoListAdapter;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
