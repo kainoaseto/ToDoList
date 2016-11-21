@@ -3,6 +3,7 @@ package me.kainoseto.todo.UI;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,14 +11,17 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import me.kainoseto.todo.AnimationUtil;
+import me.kainoseto.todo.Callback.ItemTouchHelperAdapter;
+import me.kainoseto.todo.Callback.SimpleItemTouchHelperCallback;
 import me.kainoseto.todo.ItemClickListener;
 import me.kainoseto.todo.ItemDetailActivity;
 import me.kainoseto.todo.MainActivity;
 import me.kainoseto.todo.R;
 
-public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder>
+public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> implements ItemTouchHelperAdapter
 {
     private static final String LOG_TAG = TodoListAdapter.class.getSimpleName();
 
@@ -130,5 +134,33 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder>
     @Override
     public int getItemCount() {
         return todoItems.size();
+    }
+
+    //For swipe to delete and drag to move
+
+    //TODO: Swap with content manager
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        if(fromPosition < toPosition){
+            for (int i = fromPosition; i < toPosition; i++) {
+                //Collections.swap(todoItems, i, i+1);
+                //MainActivity.todoDbHelper.swapIndex(i, i+1);
+            }
+        }else{
+            for (int i = fromPosition; i < toPosition; i++) {
+                //Collections.swap(todoItems, i, i-1);
+                //MainActivity.todoDbHelper.swapIndex(i, i-1);
+            }
+        }
+
+        notifyItemMoved(fromPosition, toPosition);
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        //todoItems.remove(position);
+        //MainActivity.todoDbHelper.removeToDoItem(position);
+        notifyItemRemoved(position);
     }
 }
