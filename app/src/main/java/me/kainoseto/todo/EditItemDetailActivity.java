@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.facebook.stetho.inspector.elements.ShadowDocument;
 
+import me.kainoseto.todo.Database.TodoDatabaseHandler;
 import me.kainoseto.todo.Preferences.PreferencesManager;
 
 
@@ -22,41 +23,53 @@ import me.kainoseto.todo.Preferences.PreferencesManager;
  * Created by Kainoa.
  */
 
-public class EditItemDetailActivity extends AppCompatActivity {
+public class EditItemDetailActivity extends AppCompatActivity
+{
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
     private EditText nameEditText;
     private EditText descEditText;
     private Switch  doneSwitch;
+
+    // Current values of item
     private String name;
     private String description;
     private boolean done;
     private int idx;
-    private boolean newItem;
+
+
+    private boolean isNewItem;
+    private TodoContentManager contentManager;
+    private TodoDatabaseHandler databaseHandler;
 
     CoordinatorLayout cl;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        // More theme garbage to clean up....
         if(MainActivity.preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false)) {
             setTheme(R.style.LightTheme);
-            //cl.setBackgroundColor(ContextCompat.getColor(this, R.color.colorLightBackground));
         } else {
             setTheme(R.style.DarkTheme);
-            //cl.setBackgroundColor(ContextCompat.getColor(this, R.color.windowBackground));
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editdetails);
 
-        nameEditText = (EditText) findViewById(R.id.edit_name);
-        descEditText = (EditText) findViewById(R.id.edit_desc);
-        doneSwitch = (Switch) findViewById(R.id.switch_done);
+        nameEditText    = (EditText) findViewById(R.id.edit_name);
+        descEditText    = (EditText) findViewById(R.id.edit_desc);
+        doneSwitch      = (Switch) findViewById(R.id.switch_done);
 
-        Intent intent = getIntent();
-        Bundle intentData = intent.getExtras();
+        // Intent that called this activity
+        Intent callingIntent    = getIntent();
+        Bundle intentData       = callingIntent.getExtras();
 
-        newItem = intentData.getBoolean("NEW");
+        contentManager = TodoContentManager.getInstance();
+        databaseHandler = contentManager.getDatabaseHandler();
 
-        if (!newItem) {
+        isNewItem = intentData.getBoolean(getString(R.string.intent_create_item));
+
+        if (!isNewItem) {
             name = intentData.getString("NAME");
             description = intentData.getString("DESC");
             done = intentData.getBoolean("DONE");
@@ -90,33 +103,36 @@ public class EditItemDetailActivity extends AppCompatActivity {
     @Override
     public void finish() {
         super.finish();
-        /*if (!UpdateDB()) {
-            Toast.makeText(this, R.string.item_fail_to_save, Toast.LENGTH_LONG).show();
-        }*/
+
+        /* The back button was pressed, maybe check if there were changes in any of the fields
+            and if there are changes present then ask them here if they would like to save
+        */
+
     }
 
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        /*if (!UpdateDB()) {
-            Toast.makeText(this, R.string.item_fail_to_save, Toast.LENGTH_LONG).show();
-        } else {
-            Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(detailViewIntent);
-        }*/
+
+        // We need to be returning to our last activity which might not be detailViewIntent...
+        // Maybe convert this to a fragment to handle lifecycle better
         Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(detailViewIntent);
     }
 
     private boolean UpdateDB() {
-        if(!nameEditText.getText().toString().equals("")) {
-            if(newItem) {
-                MainActivity.todoDbHelper.addToDoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
-            } else {
-                MainActivity.todoDbHelper.updateName(idx, nameEditText.getText().toString());
-                MainActivity.todoDbHelper.updateDesc(idx, descEditText.getText().toString());
-                MainActivity.todoDbHelper.updateDone(idx, doneSwitch.isChecked());
+        if(!nameEditText.getText().toString().equals(""))
+        {
+            if(isNewItem)
+            {
+                databaseHandler.addToDoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
+            }
+            else
+            {
+                databaseHandler.updateName(idx, nameEditText.getText().toString());
+                databaseHandler.updateDesc(idx, descEditText.getText().toString());
+                databaseHandler.updateDone(idx, doneSwitch.isChecked());
             }
         }
         else {

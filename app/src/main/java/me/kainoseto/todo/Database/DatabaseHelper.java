@@ -11,8 +11,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-public class DatabaseHandler extends SQLiteOpenHelper {
-    private static final String LOG_TAG = "DatabaseHandler";
+public class DatabaseHelper extends SQLiteOpenHelper {
+    private static final String LOG_TAG = "DatabaseHelper";
 
     public static String DB_NAME;
     private static String SQL_CREATE_ENTRIES;
@@ -22,7 +22,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private boolean contentCacheNeedsUpdate = true;
 
 
-    public DatabaseHandler(Context context, String databaseName, String entries, int dbVersion) {
+    public DatabaseHelper(Context context, String databaseName, String entries, int dbVersion) {
         super(context, databaseName, null, dbVersion);
         DB_NAME = databaseName;
         SQL_CREATE_ENTRIES = entries;

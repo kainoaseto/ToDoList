@@ -10,7 +10,8 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to intent passing -->
-    <string name="idx">todo_item_index</string>
+    <string name="intent_idx">todo_item_index</string>
+    <string name="intent_create_item">todo_create_new_item</string>
 
     <!-- Strings related to Settings -->
 
