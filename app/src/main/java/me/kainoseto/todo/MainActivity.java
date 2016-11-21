@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -16,6 +17,7 @@ import com.facebook.stetho.Stetho;
 
 import java.util.ArrayList;
 
+import me.kainoseto.todo.Callback.SimpleItemTouchHelperCallback;
 import me.kainoseto.todo.Database.TodoListDbHelper;
 import me.kainoseto.todo.Preferences.PreferencesManager;
 import me.kainoseto.todo.UI.TodoItem;
@@ -99,6 +101,11 @@ public class MainActivity extends AppCompatActivity {
         listAdapter = new TodoListAdapter(this, todoItems);
         todoListView.setAdapter(listAdapter);
         todoListView.setLayoutManager(new LinearLayoutManager(this));
+
+        //For swipe and drag of todo items
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(listAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(todoListView);
 
         UpdateList();
     }
