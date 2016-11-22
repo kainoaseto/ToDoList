@@ -4,19 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import com.facebook.stetho.inspector.elements.ShadowDocument;
-
+import me.kainoseto.todo.Content.TodoContentManager;
 import me.kainoseto.todo.Database.TodoDatabaseHandler;
 import me.kainoseto.todo.Preferences.PreferencesManager;
+import me.kainoseto.todo.Content.TodoItem;
 
 
 /**
@@ -35,8 +32,8 @@ public class EditItemDetailActivity extends AppCompatActivity
     private String name;
     private String description;
     private boolean done;
-    private int idx;
-
+    private int uiIdx;
+    private TodoItem currentItem;
 
     private boolean isNewItem;
     private TodoContentManager contentManager;
@@ -65,15 +62,16 @@ public class EditItemDetailActivity extends AppCompatActivity
         Bundle intentData       = callingIntent.getExtras();
 
         contentManager = TodoContentManager.getInstance();
-        databaseHandler = contentManager.getDatabaseHandler();
 
         isNewItem = intentData.getBoolean(getString(R.string.intent_create_item));
 
-        if (!isNewItem) {
-            name = intentData.getString("NAME");
-            description = intentData.getString("DESC");
-            done = intentData.getBoolean("DONE");
-            idx = intentData.getInt("POSITION");
+        if (!isNewItem)
+        {
+            uiIdx           = intentData.getInt(getString(R.string.intent_idx));
+            currentItem     = contentManager.getTodoItem(uiIdx);
+            name            = currentItem.getName();
+            description     = currentItem.getDescription();
+            done            = currentItem.isDone();
             nameEditText.setText(name);
             descEditText.setText(description);
             doneSwitch.setChecked(done);
@@ -126,13 +124,13 @@ public class EditItemDetailActivity extends AppCompatActivity
         {
             if(isNewItem)
             {
-                databaseHandler.addToDoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
+                contentManager.addTodoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
             }
             else
             {
-                databaseHandler.updateName(idx, nameEditText.getText().toString());
-                databaseHandler.updateDesc(idx, descEditText.getText().toString());
-                databaseHandler.updateDone(idx, doneSwitch.isChecked());
+                contentManager.setName(uiIdx, nameEditText.getText().toString());
+                contentManager.setDesc(uiIdx, descEditText.getText().toString());
+                contentManager.setDone(uiIdx, doneSwitch.isChecked());
             }
         }
         else {

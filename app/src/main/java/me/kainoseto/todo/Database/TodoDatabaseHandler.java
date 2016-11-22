@@ -5,18 +5,19 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 import java.util.ArrayList;
-import me.kainoseto.todo.UI.TodoItem;
+import me.kainoseto.todo.Content.TodoItem;
 import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.*;
 
 public class TodoDatabaseHandler extends DatabaseHelper
 {
     private static final String LOG_TAG = TodoDatabaseHandler.class.getSimpleName();
 
-    private static final int DB_VERSION = 10;
+    private static final int DB_VERSION = 1;
     private static final String DB_NAME = "todo_list.db";
 
     private static final String[] FULL_PROJECTION = {
             COLUMN_NAME_ID,
+            COLUMN_NAME_UI_IDX,
             COLUMN_NAME_NAME,
             COLUMN_NAME_DESC,
             COLUMN_NAME_DONE
@@ -26,6 +27,7 @@ public class TodoDatabaseHandler extends DatabaseHelper
     private static final String CREATE_ENTRIES =
             "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            COLUMN_NAME_UI_IDX + " INTEGER UNIQUE," +
             COLUMN_NAME_NAME + " TEXT, " +
             COLUMN_NAME_DESC + " TEXT, " +
             COLUMN_NAME_DONE + " INTEGER DEFAULT 0)";
@@ -49,7 +51,7 @@ public class TodoDatabaseHandler extends DatabaseHelper
         Log.d(LOG_TAG, "Deleted table");
     }
 
-    public void Reset() 
+    public void reset()
     {
         SQLiteDatabase db = getWritableDatabase();
         db.execSQL(DELETE_ENTRIES);
@@ -64,55 +66,74 @@ public class TodoDatabaseHandler extends DatabaseHelper
         onDowngrade(db, oldVersion, newVersion);
     }
 
-    public void addToDoItem(String name, String desc, boolean done)
+    public long addToDoItem(int uiIdx, String name, String desc, boolean done)
     {
         ContentValues item = new ContentValues();
+        item.put(COLUMN_NAME_UI_IDX, uiIdx);
         item.put(COLUMN_NAME_NAME, name);
         item.put(COLUMN_NAME_DESC, desc);
         item.put(COLUMN_NAME_DONE, done);
 
-        super.insertValues(TABLE_NAME, item);
+        return super.insertValues(TABLE_NAME, item);
     }
 
-    public void removeToDoItem(int idx)
+    public void removeToDoItem(int uiIdx)
     {
         // Which row to delete based on id
-        String[] selectionArgs = {Integer.toString(idx)};
-        Log.d(LOG_TAG, "ID: "+String.valueOf(idx));
-        super.deleteObject(TABLE_NAME, COLUMN_NAME_ID, selectionArgs);
+        String[] selectionArgs = {Integer.toString(uiIdx)};
+        Log.d(LOG_TAG, "ID: "+String.valueOf(uiIdx));
+        super.deleteObject(TABLE_NAME, COLUMN_NAME_UI_IDX, selectionArgs);
+        sendRawQuery("UPDATE todo_data " +
+                     "SET ui_idx = ui_idx - 1 " +
+                     "WHERE ui_idx > " + String.valueOf(uiIdx), true);
+
     }
 
-    public boolean updateName(int idx, String name)
+    public boolean updateName(int uiIdx, String name)
     {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME_NAME, name);
-        return updateToDoItem(idx, cv);
+        return updateToDoItem(uiIdx, cv);
     }
 
-    public boolean updateDesc(int idx, String desc)
+    public boolean updateDesc(int uiIdx, String desc)
     {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME_DESC, desc);
-        return updateToDoItem(idx, cv);
+        return updateToDoItem(uiIdx, cv);
     }
 
-    public boolean updateDone(int idx, boolean done)
+    public boolean updateDone(int uiIdx, boolean done)
     {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME_DONE, done ? 1 : 0);
-        return updateToDoItem(idx, cv);
+        return updateToDoItem(uiIdx, cv);
+    }
+
+    public boolean updateUiIdx(int uiIdx, int newUiIdx)
+    {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME_UI_IDX, newUiIdx);
+        return updateToDoItem(uiIdx, cv);
     }
 
     public void getAllItems(ArrayList<TodoItem> items)
     {
-        ArrayList<ContentValues> data = super.getAllContent(TABLE_NAME, FULL_PROJECTION);
+        ArrayList<ContentValues> data = super.getAllContent(TABLE_NAME, FULL_PROJECTION, COLUMN_NAME_UI_IDX+" ASC");
         if(data == null || data.size() < 1)
         {
             return;
         }
+
         for (ContentValues item : data)
         {
-            TodoItem newItem = new TodoItem(item.getAsInteger(COLUMN_NAME_ID), item.getAsString(COLUMN_NAME_NAME), item.getAsString(COLUMN_NAME_DESC), item.getAsBoolean(COLUMN_NAME_DONE));
+            TodoItem newItem = new TodoItem(
+                    item.getAsInteger(COLUMN_NAME_ID),
+                    item.getAsInteger(COLUMN_NAME_UI_IDX),
+                    item.getAsString(COLUMN_NAME_NAME),
+                    item.getAsString(COLUMN_NAME_DESC),
+                    item.getAsBoolean(COLUMN_NAME_DONE)
+            );
             items.add(newItem);
         }
     }
@@ -121,11 +142,11 @@ public class TodoDatabaseHandler extends DatabaseHelper
         return super.getRowCount(TABLE_NAME);
     }
 
-    private boolean updateToDoItem(int idx, ContentValues values)
+    private boolean updateToDoItem(int uiIdx, ContentValues values)
     {
         // Which row to update based on id
-        String[] selectionArgs = {String.valueOf(idx)};
-        Log.d(LOG_TAG, "ID: "+String.valueOf(idx));
-        return super.updateObject(TABLE_NAME, COLUMN_NAME_ID, selectionArgs, values);
+        String[] selectionArgs = {String.valueOf(uiIdx)};
+        Log.d(LOG_TAG, "ID: "+String.valueOf(uiIdx));
+        return super.updateObject(TABLE_NAME, COLUMN_NAME_UI_IDX, selectionArgs, values);
     }
 }

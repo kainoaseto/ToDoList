@@ -14,9 +14,7 @@ import android.widget.ImageButton;
 
 import com.facebook.stetho.Stetho;
 
-import java.util.ArrayList;
-
-import me.kainoseto.todo.Database.TodoDatabaseHandler;
+import me.kainoseto.todo.Content.TodoContentManager;
 import me.kainoseto.todo.Preferences.PreferencesManager;
 import me.kainoseto.todo.UI.TodoListAdapter;
 
@@ -134,7 +132,6 @@ public class MainActivity extends AppCompatActivity
 
     public void UpdateList()
     {
-        contentManager.refreshContent();
         todoListView.setAdapter(listAdapter);
     }
 

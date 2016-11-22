@@ -25,17 +25,21 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import me.kainoseto.todo.Content.TodoContentManager;
 import me.kainoseto.todo.Preferences.PreferencesManager;
 
 
 public class SettingsActivity extends AppCompatPreferenceActivity {
 
     static SharedPreferences sharedPreferences;
+    private static TodoContentManager contentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setupActionBar();
+
+        contentManager = TodoContentManager.getInstance();
 
         sharedPreferences = MainActivity.preferencesManager.getSharedPref();
     }
@@ -145,7 +149,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             resetButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    MainActivity.todoDbHelper.Reset();
+                    contentManager.resetContent();
                     MainActivity.preferencesManager.clearPrefs(PreferencesManager.KEY_MAINPREFS, PreferencesManager.PRIVATE_MODE);
                     Toast.makeText(getContext(), R.string.reset_app_toast, Toast.LENGTH_SHORT).show();
 

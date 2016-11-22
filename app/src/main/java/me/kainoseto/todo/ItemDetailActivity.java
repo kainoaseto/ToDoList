@@ -17,6 +17,8 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import me.kainoseto.todo.Content.TodoContentManager;
+import me.kainoseto.todo.Content.TodoItem;
 import me.kainoseto.todo.Preferences.PreferencesManager;
 
 public class ItemDetailActivity extends AppCompatActivity {
@@ -30,7 +32,10 @@ public class ItemDetailActivity extends AppCompatActivity {
     private String name;
     private String description;
     private boolean done;
-    private int idx;
+    private int uiIdx;
+
+    private TodoContentManager contentManager;
+    private TodoItem currentItem;
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -55,13 +60,18 @@ public class ItemDetailActivity extends AppCompatActivity {
         removeButton = (Button) findViewById(R.id.removeTask);
         editButton = (Button) findViewById(R.id.editButton);
 
-        Intent intent = getIntent();
-        Bundle intentData = intent.getExtras();
+        contentManager = TodoContentManager.getInstance();
 
-        name = intentData.getString("NAME");
-        description = intentData.getString("DESC");
-        done = intentData.getBoolean("DONE");
-        idx = intentData.getInt("POSITION");
+        Intent callingIntent        = getIntent();
+        Bundle callingIntentData    = callingIntent.getExtras();
+
+        uiIdx           = callingIntentData.getInt(getString(R.string.intent_idx));
+        currentItem     = contentManager.getTodoItem(uiIdx);
+
+        name            = currentItem.getName();
+        description     = currentItem.getDescription();
+        done            = currentItem.isDone();
+
         nameView.setText(name);
         descriptionView.setText(description);
         doneView.setChecked(done);
@@ -69,7 +79,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         removeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.todoDbHelper.removeToDoItem(idx);
+                contentManager.removeTodoItem(uiIdx);
                 Log.d(LOG_TAG, "REMOVED ITEM");
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
@@ -80,11 +90,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
-                detailViewIntent.putExtra("NEW", false);
-                detailViewIntent.putExtra("NAME", name);
-                detailViewIntent.putExtra("DESC", description);
-                detailViewIntent.putExtra("DONE", done);
-                detailViewIntent.putExtra("POSITION", idx);
+                detailViewIntent.putExtra(getString(R.string.intent_idx), uiIdx);
                 startActivity(detailViewIntent);
             }
         });
@@ -95,7 +101,7 @@ public class ItemDetailActivity extends AppCompatActivity {
         doneView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                boolean updated = MainActivity.todoDbHelper.updateDone(idx, isChecked);
+                boolean updated = contentManager.setDone(uiIdx, isChecked);
                 Log.w(LOG_TAG, "Updated db with new done values: " + updated);
             }
         });

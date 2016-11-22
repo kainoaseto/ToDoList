@@ -3,21 +3,16 @@ package me.kainoseto.todo.UI;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import java.util.ArrayList;
-
-import me.kainoseto.todo.AnimationUtil;
+import me.kainoseto.todo.Content.TodoItem;
 import me.kainoseto.todo.Database.TodoDatabaseHandler;
-import me.kainoseto.todo.ItemClickListener;
 import me.kainoseto.todo.ItemDetailActivity;
-import me.kainoseto.todo.MainActivity;
 import me.kainoseto.todo.R;
-import me.kainoseto.todo.TodoContentManager;
+import me.kainoseto.todo.Content.TodoContentManager;
 
 public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder>
 {
@@ -26,9 +21,8 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder>
     private Context context;
     private LayoutInflater layoutInflater;
 
-    private int lastPosition;
+    private int lastIndex;
     private TodoContentManager contentManager;
-    private TodoDatabaseHandler databaseHandler;
 
     public TodoListAdapter(Context context)
     {
@@ -36,7 +30,6 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder>
 
         layoutInflater = LayoutInflater.from(context);
         contentManager = TodoContentManager.getInstance();
-        databaseHandler = contentManager.getDatabaseHandler();
     }
 
     @Override
@@ -47,9 +40,9 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder>
     }
 
     @Override
-    public void onBindViewHolder(TodoItemHolder holder, final int position)
+    public void onBindViewHolder(TodoItemHolder holder, final int uiIdx)
     {
-        final TodoItem currentItem = contentManager.getTodoItem(position);
+        final TodoItem currentItem = contentManager.getTodoItem(uiIdx);
         String fullName = currentItem.getName();
         String fullDesc = currentItem.getDescription();
 
@@ -92,12 +85,12 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder>
         if(currentItem.isDone())
             holder.checkMark.setImageResource(R.drawable.ic_check_circle_white_48dp);
 
-        if (position > lastPosition) {
+        if (uiIdx > lastIndex) {
             AnimationUtil.animate(holder, true);
         } else {
             AnimationUtil.animate(holder, false);
         }
-        lastPosition = position;
+        lastIndex = uiIdx;
 
         holder.setOnClickListener(new View.OnClickListener()
         {
@@ -105,7 +98,8 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder>
             public void onClick(View view)
             {
                 Intent detailViewIntent = new Intent(context, ItemDetailActivity.class);
-                detailViewIntent.putExtra(context.getString(R.string.intent_idx), currentItem.getIdx());
+
+                detailViewIntent.putExtra(context.getString(R.string.intent_idx), currentItem.getUiIdx());
                 context.startActivity(detailViewIntent);
             }
         });
@@ -116,7 +110,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder>
             public void onClick(View v)
             {
                 boolean isDone = currentItem.isDone();
-                databaseHandler.updateDone(currentItem.getIdx(), !isDone);
+                contentManager.setDone(currentItem.getUiIdx(), !isDone);
                 currentItem.setDone(!isDone);
 
                 AnimationUtil.checkAnimate((ImageView) v, true);
