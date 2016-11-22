@@ -1,4 +1,4 @@
-package me.kainoseto.todo.UI;
+package me.kainoseto.todo.Content;
 
 /**
  * Created by Kainoa on 10/14/16.
@@ -6,14 +6,16 @@ package me.kainoseto.todo.UI;
 
 public class TodoItem
 {
-    private int idx;
+    private int id;
+    private int uiIdx;
     private String name;
     private String description;
     private boolean done;
 
-    public TodoItem(int idx, String name, String description, boolean done)
+    public TodoItem(int id, int uiIdx, String name, String description, boolean done)
     {
-        this.idx = idx;
+        this.id = id;
+        this.uiIdx = uiIdx;
         this.name = name;
         this.description = description;
         this.done = done;
@@ -43,9 +45,9 @@ public class TodoItem
         this.name = name;
     }
 
-    public int getIdx() { return idx; }
+    public int getId() { return id; }
 
-    public void setIdx(int idx) {
-        this.idx = idx;
-    }
+    public int getUiIdx() { return uiIdx; }
+
+    public void setUidIdx(int uiIdx) { this.uiIdx = uiIdx; }
 }

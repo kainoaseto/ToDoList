@@ -15,34 +15,43 @@ import android.widget.ImageButton;
 
 import com.facebook.stetho.Stetho;
 
-import java.util.ArrayList;
-
 import me.kainoseto.todo.Callback.SimpleItemTouchHelperCallback;
-import me.kainoseto.todo.Database.TodoListDbHelper;
+import me.kainoseto.todo.Content.TodoContentManager;
+import me.kainoseto.todo.Database.ContentManager;
 import me.kainoseto.todo.Preferences.PreferencesManager;
-import me.kainoseto.todo.UI.TodoItem;
 import me.kainoseto.todo.UI.TodoListAdapter;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+{
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
-    RecyclerView todoListView;
-    TodoListAdapter listAdapter;
-    ArrayList<TodoItem> todoItems;
+    private RecyclerView todoListView;
+    private TodoListAdapter listAdapter;
+    Stetho.Initializer initializer;
+
+    private ContentManager contentManager;
+
+    /* TODO: Setup a proper theme management system by having a base layout all go off it
+       a theme manager class can set which theme and it will update for all activities based
+       off that layout.
+    */
     CoordinatorLayout cl;
     public static final int SETTINGS_INTENT_RESULT_KEY = 4001;
-    public static TodoListDbHelper todoDbHelper;
     public static PreferencesManager preferencesManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        // Setup a better pref management system since this may not be neccessary anymore
         if (preferencesManager == null) {
             preferencesManager = new PreferencesManager(getApplicationContext());
             preferencesManager.createPref(PreferencesManager.KEY_MAINPREFS, PreferencesManager.PRIVATE_MODE);
         }
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Remove this since its really hacky and head the above TODO statement
         cl = (CoordinatorLayout) findViewById(R.id.actvity_main);
         if(preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false)) {
             setTheme(R.style.LightTheme_NoActionBar);
@@ -55,28 +64,27 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
-
-
-
         getSupportActionBar().setTitle(preferencesManager.getSharedPref().getString(PreferencesManager.KEY_LISTNAME, "ToDo"));
 
-
-
         // This is populated only on the first run so initialize our online debugger for sqlite
-        if(todoDbHelper == null) {
-            Stetho.newInitializerBuilder(this)
+        if(initializer == null)
+        {
+            initializer = Stetho.newInitializerBuilder(this)
                     .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                     .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                     .build();
-            Stetho.initializeWithDefaults(this);
+            Stetho.initialize(initializer);
+            //Stetho.initializeWithDefaults(this);
         }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_additem);
-        fab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton createItemButton = (FloatingActionButton) findViewById(R.id.fab_additem);
+        createItemButton.setOnClickListener(new View.OnClickListener()
+        {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
-                detailViewIntent.putExtra("NEW", true);
+                detailViewIntent.putExtra(getString(R.string.intent_create_item), true);
                 startActivity(detailViewIntent);
             }
         });
@@ -91,14 +99,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if( todoDbHelper == null) {
-            todoDbHelper = new TodoListDbHelper(getApplicationContext());
+        // Initialize the singleton contentManager
+        if( contentManager == null )
+        {
+            TodoContentManager.initInstance(getApplicationContext());
+            contentManager = TodoContentManager.getInstance();
         }
 
-        todoItems = new ArrayList<>();
+        todoListView        = (RecyclerView) findViewById(R.id.listRecycler);
+        listAdapter         = new TodoListAdapter(this);
 
-        todoListView = (RecyclerView) findViewById(R.id.listRecycler);
-        listAdapter = new TodoListAdapter(this, todoItems);
         todoListView.setAdapter(listAdapter);
         todoListView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -111,12 +121,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume()
+    {
         super.onResume();
-        if(preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false)) {
+        if(preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false))
+        {
             setTheme(R.style.LightTheme_NoActionBar);
             cl.setBackgroundColor(ContextCompat.getColor(this, R.color.colorLightBackground));
-        } else {
+        }
+        else
+        {
             setTheme(R.style.DarkTheme_NoActionBar);
             cl.setBackgroundColor(ContextCompat.getColor(this, R.color.windowBackground));
         }
@@ -124,9 +138,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(preferencesManager.getSharedPref().getString(PreferencesManager.KEY_LISTNAME, "ToDo"));
     }
 
-    public void UpdateList() {
-        todoItems.clear();
-        todoDbHelper.getAllItems(todoItems);
+    public void UpdateList()
+    {
         todoListView.setAdapter(listAdapter);
     }
 
