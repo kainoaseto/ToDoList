@@ -27,8 +27,6 @@ public class ItemDetailActivity extends AppCompatActivity {
     private TextView nameView;
     private TextView descriptionView;
     private Switch doneView;
-    private Button removeButton;
-    private Button editButton;
 
     private String name;
     private String description;
@@ -58,8 +56,6 @@ public class ItemDetailActivity extends AppCompatActivity {
         nameView = (TextView) findViewById(R.id.text_name);
         descriptionView = (TextView) findViewById(R.id.text_desc);
         doneView = (Switch) findViewById(R.id.switch_done_view);
-        removeButton = (Button) findViewById(R.id.removeTask);
-        editButton = (Button) findViewById(R.id.editButton);
 
         contentManager = TodoContentManager.getInstance();
 
@@ -77,25 +73,6 @@ public class ItemDetailActivity extends AppCompatActivity {
         descriptionView.setText(description);
         doneView.setChecked(done);
 
-        removeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                contentManager.removeTodoItem(uiIdx);
-                Log.d(LOG_TAG, "REMOVED ITEM");
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        editButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
-                detailViewIntent.putExtra(getString(R.string.intent_idx), uiIdx);
-                startActivity(detailViewIntent);
-            }
-        });
-
         toolbar.setTitle(name);
         setSupportActionBar(toolbar);
 
@@ -106,5 +83,37 @@ public class ItemDetailActivity extends AppCompatActivity {
                 Log.w(LOG_TAG, "Updated db with new done values: " + updated);
             }
         });
+    }
+
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
+                detailViewIntent.putExtra(getString(R.string.intent_idx), uiIdx);
+                startActivity(detailViewIntent);
+                return true;
+
+            case R.id.action_remove:
+                contentManager.removeTodoItem(uiIdx);
+                Log.d(LOG_TAG, "REMOVED ITEM");
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 }

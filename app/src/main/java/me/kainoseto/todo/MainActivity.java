@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Remove this since its really hacky and head the above TODO statement
+        // Remove this since its really hacky and heed the above TODO statement
         cl = (CoordinatorLayout) findViewById(R.id.actvity_main);
         if(preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false)) {
             setTheme(R.style.LightTheme_NoActionBar);

@@ -15,20 +15,29 @@
         android:layout_width="match_parent"
         android:theme="@style/DarkTheme.AppBarOverlay">
 
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/edit_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/colorPrimary"
+            app:popupTheme="@style/DarkTheme.PopupOverlay">
+
+            <ImageButton
+                android:id="@+id/save_toolbar_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                app:srcCompat="@drawable/ic_save_white_24dp"
+                android:contentDescription="@string/cd_settings"
+                android:layout_weight="1"
+                android:padding="15dp"
+                android:background="@android:color/transparent"/>
+
+        </android.support.v7.widget.Toolbar>
+
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_editdetails"
         android:id="@+id/include" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_saveitem"
-        android:layout_width="60dp"
-        android:layout_height="62dp"
-        android:layout_gravity="top|left"
-        android:layout_margin="@dimen/fab_margin"
-        app:srcCompat="@drawable/ic_save_white_48dp"
-        app:backgroundTint="@color/colorAccent"
-        app:layout_anchor="@+id/include"
-        app:layout_anchorGravity="bottom|right" />
 
 </android.support.design.widget.CoordinatorLayout>

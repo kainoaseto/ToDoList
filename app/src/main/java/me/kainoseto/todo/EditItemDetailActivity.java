@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -38,7 +40,6 @@ public class EditItemDetailActivity extends AppCompatActivity
 
     private boolean isNewItem;
     private ContentManager contentManager;
-    private TodoDatabaseHandler databaseHandler;
 
     CoordinatorLayout cl;
 
@@ -47,12 +48,15 @@ public class EditItemDetailActivity extends AppCompatActivity
     {
         // More theme garbage to clean up....
         if(MainActivity.preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false)) {
-            setTheme(R.style.LightTheme);
+            setTheme(R.style.LightTheme_NoActionBar);
         } else {
-            setTheme(R.style.DarkTheme);
+            setTheme(R.style.DarkTheme_NoActionBar);
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editdetails);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.edit_toolbar);
+        setSupportActionBar(toolbar);
 
         nameEditText    = (EditText) findViewById(R.id.edit_name);
         descEditText    = (EditText) findViewById(R.id.edit_desc);
@@ -81,14 +85,10 @@ public class EditItemDetailActivity extends AppCompatActivity
             getSupportActionBar().setTitle("New Item");
         }
 
-
-
-
-        // TODO: Replace with save button in action bar
-        FloatingActionButton fab_save = (FloatingActionButton) findViewById(R.id.fab_saveitem);
-        fab_save.setOnClickListener(new View.OnClickListener() {
+        ImageButton settingsBtn = (ImageButton) findViewById(R.id.save_toolbar_button);
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 if(!UpdateDB()) {
                     Toast.makeText(getApplicationContext(), R.string.item_fail_to_save, Toast.LENGTH_LONG).show();
                 } else {

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">ToDo</string>
     <string name="action_edit">Edit</string>
+    <string name="action_remove">Remove</string>
     <string name="item_name">Name</string>
     <string name="item_desc">Description</string>
     <string name="item_done">Complete</string>
