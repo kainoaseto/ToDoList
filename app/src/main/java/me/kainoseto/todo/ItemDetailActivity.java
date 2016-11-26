@@ -17,6 +17,9 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import me.kainoseto.todo.Content.TodoContentManager;
+import me.kainoseto.todo.Content.TodoItem;
+import me.kainoseto.todo.Database.ContentManager;
 import me.kainoseto.todo.Preferences.PreferencesManager;
 
 public class ItemDetailActivity extends AppCompatActivity {
@@ -24,13 +27,14 @@ public class ItemDetailActivity extends AppCompatActivity {
     private TextView nameView;
     private TextView descriptionView;
     private Switch doneView;
-    private Button removeButton;
-    private Button editButton;
 
     private String name;
     private String description;
     private boolean done;
-    private int idx;
+    private int uiIdx;
+
+    private ContentManager contentManager;
+    private TodoItem currentItem;
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -52,42 +56,22 @@ public class ItemDetailActivity extends AppCompatActivity {
         nameView = (TextView) findViewById(R.id.text_name);
         descriptionView = (TextView) findViewById(R.id.text_desc);
         doneView = (Switch) findViewById(R.id.switch_done_view);
-        removeButton = (Button) findViewById(R.id.removeTask);
-        editButton = (Button) findViewById(R.id.editButton);
 
-        Intent intent = getIntent();
-        Bundle intentData = intent.getExtras();
+        contentManager = TodoContentManager.getInstance();
 
-        name = intentData.getString("NAME");
-        description = intentData.getString("DESC");
-        done = intentData.getBoolean("DONE");
-        idx = intentData.getInt("POSITION");
+        Intent callingIntent        = getIntent();
+        Bundle callingIntentData    = callingIntent.getExtras();
+
+        uiIdx           = callingIntentData.getInt(getString(R.string.intent_idx));
+        currentItem     = contentManager.getTodoItem(uiIdx);
+
+        name            = currentItem.getName();
+        description     = currentItem.getDescription();
+        done            = currentItem.isDone();
+
         nameView.setText(name);
         descriptionView.setText(description);
         doneView.setChecked(done);
-
-        removeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity.todoDbHelper.removeToDoItem(idx);
-                Log.d(LOG_TAG, "REMOVED ITEM");
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        editButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
-                detailViewIntent.putExtra("NEW", false);
-                detailViewIntent.putExtra("NAME", name);
-                detailViewIntent.putExtra("DESC", description);
-                detailViewIntent.putExtra("DONE", done);
-                detailViewIntent.putExtra("POSITION", idx);
-                startActivity(detailViewIntent);
-            }
-        });
 
         toolbar.setTitle(name);
         setSupportActionBar(toolbar);
@@ -95,9 +79,41 @@ public class ItemDetailActivity extends AppCompatActivity {
         doneView.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                boolean updated = MainActivity.todoDbHelper.updateDone(idx, isChecked);
+                boolean updated = contentManager.setDone(uiIdx, isChecked);
                 Log.w(LOG_TAG, "Updated db with new done values: " + updated);
             }
         });
+    }
+
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_edit:
+                Intent detailViewIntent = new Intent(getApplicationContext(), EditItemDetailActivity.class);
+                detailViewIntent.putExtra(getString(R.string.intent_idx), uiIdx);
+                startActivity(detailViewIntent);
+                return true;
+
+            case R.id.action_remove:
+                contentManager.removeTodoItem(uiIdx);
+                Log.d(LOG_TAG, "REMOVED ITEM");
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
     }
 }

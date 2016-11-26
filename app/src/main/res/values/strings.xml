@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">ToDo</string>
     <string name="action_edit">Edit</string>
+    <string name="action_remove">Remove</string>
     <string name="item_name">Name</string>
     <string name="item_desc">Description</string>
     <string name="item_done">Complete</string>
@@ -10,7 +11,8 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to intent passing -->
-    <string name="idx">todo_item_index</string>
+    <string name="intent_idx">todo_item_index</string>
+    <string name="intent_create_item">todo_create_new_item</string>
 
     <!-- Strings related to Settings -->
 

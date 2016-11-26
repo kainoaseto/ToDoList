@@ -21,7 +21,9 @@
         <activity
             android:name=".ItemDetailActivity"
             android:theme="@style/DarkTheme.NoActionBar" />
-        <activity android:name=".EditItemDetailActivity" />
+        <activity
+            android:name=".EditItemDetailActivity"
+            android:theme="@style/DarkTheme.NoActionBar" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"

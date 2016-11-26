@@ -11,8 +11,8 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-public class DatabaseHandler extends SQLiteOpenHelper {
-    private static final String LOG_TAG = "DatabaseHandler";
+public class DatabaseHelper extends SQLiteOpenHelper {
+    private static final String LOG_TAG = "DatabaseHelper";
 
     public static String DB_NAME;
     private static String SQL_CREATE_ENTRIES;
@@ -22,7 +22,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private boolean contentCacheNeedsUpdate = true;
 
 
-    public DatabaseHandler(Context context, String databaseName, String entries, int dbVersion) {
+    public DatabaseHelper(Context context, String databaseName, String entries, int dbVersion) {
         super(context, databaseName, null, dbVersion);
         DB_NAME = databaseName;
         SQL_CREATE_ENTRIES = entries;
@@ -55,7 +55,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public boolean deleteObject(String tableName, String columnName, String[] selectionArgs) {
         String selection = columnName + " = ?";
-        int rowsDeleted = getDatabase().delete(tableName, "_id = ?", selectionArgs);
+        int rowsDeleted = getDatabase().delete(tableName, selection, selectionArgs);
         Log.d(LOG_TAG, "rowsDeleted: " + rowsDeleted);
         if (rowsDeleted > 0) {
             contentCacheNeedsUpdate = true;
@@ -65,7 +65,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     public boolean updateObject(String tableName, String columnName, String[] selectionArgs, ContentValues values) {
         String selection = columnName + " = ?";
-        int rowsUpdated = getDatabase().update(tableName, values, "_id = ?", selectionArgs);
+        int rowsUpdated = getDatabase().update(tableName, values, selection, selectionArgs);
         Log.d(LOG_TAG, "Rowsupdated: " + rowsUpdated);
         if (rowsUpdated > 0) {
             contentCacheNeedsUpdate = true;
@@ -142,12 +142,31 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return content;
     }
 
-    public ArrayList<ContentValues> getAllContent(String tableName, String[] projection) {
-        if (!contentCacheNeedsUpdate && contentCache.size() > 0) {
+    public ArrayList<ContentValues> getAllContent(String tableName, String[] projection)
+    {
+        return getAllContent(tableName, projection, null);
+    }
+
+    /**
+     *
+     * @param tableName
+     * @param projection
+     * @param orderBy A string that contains the key and then the order ex. "_id ASC"
+     * @return Array list of content values
+     */
+    public ArrayList<ContentValues> getAllContent(String tableName, String[] projection, String orderBy)
+    {
+        String queryString = "SELECT * FROM " + tableName;
+
+        if (!contentCacheNeedsUpdate && contentCache.size() > 0)
             return contentCache;
+
+        if(orderBy != null)
+        {
+            queryString = "SELECT * FROM " + tableName + " ORDER BY " + orderBy;
         }
 
-        Cursor cursor = getDatabase().rawQuery("SELECT * FROM " + tableName, null);
+        Cursor cursor = getDatabase().rawQuery(queryString, null);
 
         ArrayList<ContentValues> contentList = new ArrayList<>();
 
@@ -165,6 +184,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         contentCacheNeedsUpdate = false;
         return contentList;
+    }
+
+    /**
+     * WARNING this is a dangerous operation and should ONLY be ran if you know all the ramifications
+     * of the operation that you are doing. ZERO handling will be done for you.
+     * @param query
+     * @param resetCache
+     */
+    protected void sendRawQuery(String query, boolean resetCache)
+    {
+        if(resetCache)
+            InvalidateCache();
+
+        getDatabase().execSQL(query);
     }
 
     @Override

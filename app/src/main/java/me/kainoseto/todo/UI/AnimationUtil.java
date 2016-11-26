@@ -1,4 +1,4 @@
-package me.kainoseto.todo;
+package me.kainoseto.todo.UI;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;

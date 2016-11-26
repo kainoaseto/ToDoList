@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import me.kainoseto.todo.ItemClickListener;
 import me.kainoseto.todo.R;
 
 public class TodoItemHolder extends RecyclerView.ViewHolder
