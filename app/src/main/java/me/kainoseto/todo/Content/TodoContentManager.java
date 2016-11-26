@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import me.kainoseto.todo.Database.ContentManager;
 import me.kainoseto.todo.Database.TodoDatabaseHandler;
 import java.lang.Math;
+import java.util.List;
 
 /**
  * Created by Kainoa on 11/20/2016.
@@ -66,15 +67,15 @@ public class TodoContentManager implements ContentManager
     }
 
     @Override
-    public boolean addTodoItem(String name, String desc, boolean done)
+    public boolean addTodoItem(String name, String desc, List<Subtask> subtasks, boolean done)
     {
         int uiIdx = getSize();
 
-        long rowId = databaseHandler.addToDoItem(uiIdx, name, desc, done);
+        long rowId = databaseHandler.addToDoItem(uiIdx, name, desc, done, subtasks);
         if (rowId < 0)
             return false;
 
-        todoItems.add(uiIdx, new TodoItem(new BigDecimal(rowId).intValueExact(), uiIdx, name, desc, done));
+        todoItems.add(uiIdx, new TodoItem(new BigDecimal(rowId).intValueExact(), uiIdx, name, desc, subtasks, done));
         return true;
     }
 
@@ -98,7 +99,10 @@ public class TodoContentManager implements ContentManager
     @Override
     public TodoItem getTodoItem(int uiIdx)
     {
-        return todoItems.get(uiIdx);
+        if(uiIdx < todoItems.size()){
+            return todoItems.get(uiIdx);
+        }
+        return null;
     }
 
     @Override
@@ -141,6 +145,22 @@ public class TodoContentManager implements ContentManager
         item.setUidIdx(uiIdx);
         todoItems.set(uiIdx, item);
         return databaseHandler.updateUiIdx(uiIdx, newUiIdx);
+    }
+
+    @Override
+    public boolean setSubtasks(int uiIdx, List<Subtask> subtasks){
+        TodoItem item = todoItems.get(uiIdx);
+        item.setSubtasks(subtasks);
+        todoItems.set(uiIdx, item);
+        return databaseHandler.updateSubtasks(uiIdx, subtasks);
+    }
+
+    @Override
+    public boolean setSubtaskForTodoItem(int uiIdx, int subtaskIdx, Subtask subtask){
+        List<Subtask> subtasks = todoItems.get(uiIdx).getSubtasks();
+        subtasks.remove(subtaskIdx);
+        subtasks.add(subtaskIdx, subtask);
+        return databaseHandler.updateSubtasks(uiIdx, subtasks);
     }
 
     @Override
