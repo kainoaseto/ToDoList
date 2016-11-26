@@ -128,8 +128,23 @@ public class EditItemDetailActivity extends AppCompatActivity
             tmpSubtasks.add(subtask);
             subtaskListAdapter.setTmpSubtasks(tmpSubtasks);
             UpdateList();
+
+            //clear stuff out
+            subtaskEditText.setText("");
+            subtaskDoneSwitch.setChecked(false);
         });
 
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        if(getIntent().getExtras().getBoolean(getString(R.string.intent_create_item))){
+            subtaskListAdapter = new SubtaskListTmpAdapter(this, uiIdx, new ArrayList());
+        }
+
+        UpdateList();
     }
 
     @Override

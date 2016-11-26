@@ -43,4 +43,19 @@
         android:layout_weight="0.38"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/subtask_lbl"
+        android:textSize="25dp" />
+    
+    <View style="@style/Divider"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/detail_subtask_recycler"
+        android:scrollbars="vertical"
+        />
+    
 </LinearLayout>

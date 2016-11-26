@@ -7,6 +7,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -21,12 +23,14 @@ import me.kainoseto.todo.Content.TodoContentManager;
 import me.kainoseto.todo.Content.TodoItem;
 import me.kainoseto.todo.Database.ContentManager;
 import me.kainoseto.todo.Preferences.PreferencesManager;
+import me.kainoseto.todo.UI.SubtaskListAdapter;
 
 public class ItemDetailActivity extends AppCompatActivity {
 
     private TextView nameView;
     private TextView descriptionView;
     private Switch doneView;
+    private RecyclerView subtaskRecyclerView;
 
     private String name;
     private String description;
@@ -35,6 +39,8 @@ public class ItemDetailActivity extends AppCompatActivity {
 
     private ContentManager contentManager;
     private TodoItem currentItem;
+
+    private SubtaskListAdapter subtaskListAdapter;
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -83,6 +89,11 @@ public class ItemDetailActivity extends AppCompatActivity {
                 Log.w(LOG_TAG, "Updated db with new done values: " + updated);
             }
         });
+
+        subtaskRecyclerView = (RecyclerView) findViewById(R.id.detail_subtask_recycler);
+        subtaskListAdapter = new SubtaskListAdapter(this, uiIdx);
+        subtaskRecyclerView.setAdapter(subtaskListAdapter);
+        subtaskRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     // Menu icons are inflated just as they were with actionbar

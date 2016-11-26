@@ -44,12 +44,25 @@
         android:layout_weight="0.08"
         android:textSize="18sp" />
 
-<!--TODO: Add border between top and bottom of RecyclerView and RecyclerView elements-->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="5dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/subtask_lbl"
+        android:textSize="25dp"/>
+
+    <View style="@style/Divider"/>
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/recycler_edit_subtasks"
         android:scrollbars="vertical" />
+
+    <View style="@style/Divider"/>
 
     <LinearLayout
         android:layout_width="match_parent"

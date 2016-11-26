@@ -6,13 +6,22 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
 import me.kainoseto.todo.Content.Subtask;
 import me.kainoseto.todo.Content.TodoItem;
-import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.*;
+
+import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_DESC;
+import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_DONE;
+import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_ID;
+import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_NAME;
+import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_SUBTASKS;
+import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_UI_IDX;
+import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.TABLE_NAME;
 
 public class TodoDatabaseHandler extends DatabaseHelper
 {
@@ -22,8 +31,8 @@ public class TodoDatabaseHandler extends DatabaseHelper
     private static final String DB_NAME = "todo_list.db";
     private Gson gson;
 
-    //For getting the class type
-    private List<Subtask> subtasksType = new ArrayList<>();
+    //Storing type so gson wont get confused by type erasure
+    private Type subtaskType = new TypeToken<List<Subtask>>(){}.getType();
 
     private static final String[] FULL_PROJECTION = {
             COLUMN_NAME_ID,
@@ -81,7 +90,7 @@ public class TodoDatabaseHandler extends DatabaseHelper
 
     public long addToDoItem(int uiIdx, String name, String desc, boolean done, List<Subtask> subtasks)
     {
-        String subtasksJson = gson.toJson(subtasks);
+        String subtasksJson = gson.toJson(subtasks, subtaskType);
 
         ContentValues item = new ContentValues();
         item.put(COLUMN_NAME_UI_IDX, uiIdx);
@@ -130,9 +139,7 @@ public class TodoDatabaseHandler extends DatabaseHelper
     }
 
     public boolean updateSubtasks(int uiIdx, List<Subtask> subtasks){
-        //TODO: Serialize subtasks and store string in db
-        String subtasksJson = gson.toJson(subtasks);
-
+        String subtasksJson = gson.toJson(subtasks, subtaskType);
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME_SUBTASKS, subtasksJson);
         return updateToDoItem(uiIdx, cv);
@@ -153,7 +160,7 @@ public class TodoDatabaseHandler extends DatabaseHelper
                     item.getAsInteger(COLUMN_NAME_UI_IDX),
                     item.getAsString(COLUMN_NAME_NAME),
                     item.getAsString(COLUMN_NAME_DESC),
-                    gson.fromJson(item.getAsString(COLUMN_NAME_SUBTASKS), subtasksType.getClass()),
+                    gson.fromJson(item.getAsString(COLUMN_NAME_SUBTASKS), subtaskType),
                     item.getAsBoolean(COLUMN_NAME_DONE)
             );
             items.add(newItem);
