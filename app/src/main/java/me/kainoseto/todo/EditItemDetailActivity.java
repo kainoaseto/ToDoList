@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +19,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.kainoseto.todo.Callback.ItemTouchHelperAdapter;
+import me.kainoseto.todo.Callback.SimpleItemTouchHelperCallback;
 import me.kainoseto.todo.Content.Subtask;
 import me.kainoseto.todo.Content.TodoContentManager;
 import me.kainoseto.todo.Content.TodoItem;
@@ -118,9 +122,16 @@ public class EditItemDetailActivity extends AppCompatActivity
         TodoItem item = contentManager.getTodoItem(uiIdx);
         List<Subtask> subtasks = (item != null) ? item.getSubtasks() : new ArrayList();
         subtaskListAdapter = new SubtaskListTmpAdapter(this, uiIdx, subtasks);
-
-        subtasksRecycler.setAdapter(subtaskListAdapter);
         subtasksRecycler.setLayoutManager(new LinearLayoutManager(this));
+        subtasksRecycler.setAdapter(subtaskListAdapter);
+
+
+        //Setting up swipe to remove
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(subtaskListAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(subtasksRecycler);
+
+        UpdateList();
 
         addSubtaskBtn.setOnClickListener((View v) -> {
             Subtask subtask = new Subtask(subtaskDoneSwitch.isChecked(), subtaskEditText.getText().toString());
@@ -128,7 +139,7 @@ public class EditItemDetailActivity extends AppCompatActivity
             tmpSubtasks.add(subtask);
             subtaskListAdapter.setTmpSubtasks(tmpSubtasks);
             UpdateList();
-
+            Log.d(LOG_TAG, "Added Subtask");
             //clear stuff out
             subtaskEditText.setText("");
             subtaskDoneSwitch.setChecked(false);
@@ -141,7 +152,8 @@ public class EditItemDetailActivity extends AppCompatActivity
         super.onResume();
 
         if(getIntent().getExtras().getBoolean(getString(R.string.intent_create_item))){
-            subtaskListAdapter = new SubtaskListTmpAdapter(this, uiIdx, new ArrayList());
+            subtaskListAdapter.setTmpSubtasks(new ArrayList<>());
+            subtaskListAdapter.setUiIdx(uiIdx);
         }
 
         UpdateList();

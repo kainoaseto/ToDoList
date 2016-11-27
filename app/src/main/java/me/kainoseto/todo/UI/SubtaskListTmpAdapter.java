@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import java.util.List;
 
+import me.kainoseto.todo.Callback.ItemTouchHelperAdapter;
 import me.kainoseto.todo.Content.Subtask;
 import me.kainoseto.todo.R;
 
@@ -18,7 +19,7 @@ import me.kainoseto.todo.R;
  * This is a one off adapter used to hold temporary state while subtasks are being edited
  */
 
-public class SubtaskListTmpAdapter extends RecyclerView.Adapter<SubtaskItemHolder> {
+public class SubtaskListTmpAdapter extends RecyclerView.Adapter<SubtaskItemHolder> implements ItemTouchHelperAdapter{
     private Context context;
     private LayoutInflater layoutInflater;
 
@@ -104,7 +105,22 @@ public class SubtaskListTmpAdapter extends RecyclerView.Adapter<SubtaskItemHolde
         return tmpSubtasks.size();
     }
 
-    public List<Subtask> getTmpSubtasks(){return tmpSubtasks;}
+    public List<Subtask> getTmpSubtasks(){return this.tmpSubtasks;}
 
     public void setTmpSubtasks(List<Subtask> tmpSubtasks){this.tmpSubtasks = tmpSubtasks;}
+
+    public void setUiIdx(int uiIdx){ this.uiIdx = uiIdx;}
+
+    //For swipe to delete
+    @Override
+    public boolean onItemMove(int fromPosition, int toPosition) {
+        //Hold to rearrange is currently disabled
+        return true;
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        tmpSubtasks.remove(position);
+        notifyItemRemoved(position);
+    }
 }
