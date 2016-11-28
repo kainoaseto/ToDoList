@@ -2,6 +2,7 @@ package me.kainoseto.todo.UI;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -13,14 +14,14 @@ import me.kainoseto.todo.R;
 
 public class SubtaskItemHolder extends RecyclerView.ViewHolder {
 
-    public ImageView checkMark;
+    public CheckBox checkMark;
     public TextView name;
 
     private View holder;
 
     public SubtaskItemHolder(View itemView) {
         super(itemView);
-        checkMark = (ImageView) itemView.findViewById(R.id.checkMark_subtask);
+        checkMark = (CheckBox) itemView.findViewById(R.id.checkMark_subtask);
         name = (TextView) itemView.findViewById(R.id.name_subtask);
 
         holder = itemView;

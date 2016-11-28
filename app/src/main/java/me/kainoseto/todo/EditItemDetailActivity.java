@@ -19,14 +19,12 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.kainoseto.todo.Callback.ItemTouchHelperAdapter;
 import me.kainoseto.todo.Callback.SimpleItemTouchHelperCallback;
 import me.kainoseto.todo.Content.Subtask;
 import me.kainoseto.todo.Content.TodoContentManager;
 import me.kainoseto.todo.Content.TodoItem;
 import me.kainoseto.todo.Database.ContentManager;
 import me.kainoseto.todo.Preferences.PreferencesManager;
-import me.kainoseto.todo.UI.SubtaskListAdapter;
 import me.kainoseto.todo.UI.SubtaskListTmpAdapter;
 
 

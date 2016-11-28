@@ -73,30 +73,12 @@ public class SubtaskListTmpAdapter extends RecyclerView.Adapter<SubtaskItemHolde
         }
 
         holder.name.setText(fullName);
-
-        if(currItem.isDone()) {
-            holder.checkMark.setImageResource(R.drawable.ic_check_circle_white_48dp);
-        }
-
-        holder.checkMark.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View v)
-            {
-                boolean isDone = currItem.isDone();
-                currItem.setDone(!isDone);
-
-                //TODO: Perhaps create a replace util method
-                tmpSubtasks.remove(position);
-                tmpSubtasks.add(position, currItem);
-
-                AnimationUtil.checkAnimate((ImageView) v, true);
-                if(isDone) {
-                    ((ImageView) v).setImageResource(R.drawable.ic_remove_circle_outline_white_48dp);
-                } else {
-                    ((ImageView) v).setImageResource(R.drawable.ic_check_circle_white_48dp);
-                }
-            }
+        holder.checkMark.setChecked(currItem.isDone());
+        holder.checkMark.setOnClickListener(v -> {
+            currItem.setDone(holder.checkMark.isChecked());
+            //TODO: Perhaps create a replace util method
+            tmpSubtasks.remove(position);
+            tmpSubtasks.add(position, currItem);
         });
     }
 

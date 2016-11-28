@@ -13,18 +13,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/checkMark_subtask"
-            android:minHeight="48dp"
-            android:minWidth="48dp"
-
-            android:layout_marginStart="26dp"
             android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:contentDescription="@string/cd_checkmark"
-            card_view:srcCompat="@drawable/ic_remove_circle_outline_white_48dp" />
+            android:checked="false"
+            />
 
         <TextView
             android:text="Name"

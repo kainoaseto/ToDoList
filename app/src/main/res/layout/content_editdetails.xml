@@ -54,15 +54,9 @@
         android:text="@string/subtask_lbl"
         android:textSize="25dp"/>
 
-    <View style="@style/Divider"/>
-
-    <android.support.v7.widget.RecyclerView
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/recycler_edit_subtasks"
-        android:scrollbars="vertical" />
-
-    <View style="@style/Divider"/>
+        android:layout_height="5dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -99,5 +93,15 @@
             android:text="Add"
             android:id="@+id/btn_add_subtask"/>
     </LinearLayout>
+
+    <View style="@style/Divider"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recycler_edit_subtasks"
+        android:scrollbars="vertical" />
+
+    <View style="@style/Divider"/>
 
 </LinearLayout>
