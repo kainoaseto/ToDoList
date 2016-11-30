@@ -3,20 +3,29 @@ package me.kainoseto.todo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import me.kainoseto.todo.Callback.SimpleItemTouchHelperCallback;
+import me.kainoseto.todo.Content.Subtask;
 import me.kainoseto.todo.Content.TodoContentManager;
-import me.kainoseto.todo.Database.ContentManager;
-import me.kainoseto.todo.Database.TodoDatabaseHandler;
-import me.kainoseto.todo.Preferences.PreferencesManager;
 import me.kainoseto.todo.Content.TodoItem;
+import me.kainoseto.todo.Database.ContentManager;
+import me.kainoseto.todo.Preferences.PreferencesManager;
+import me.kainoseto.todo.UI.SubtaskListTmpAdapter;
 
 
 /**
@@ -29,7 +38,12 @@ public class EditItemDetailActivity extends AppCompatActivity
 
     private EditText nameEditText;
     private EditText descEditText;
+    private EditText subtaskEditText;
     private Switch  doneSwitch;
+    private Switch  subtaskDoneSwitch;
+    private Button  addSubtaskBtn;
+    private RecyclerView subtasksRecycler;
+    private SubtaskListTmpAdapter subtaskListAdapter;
 
     // Current values of item
     private String name;
@@ -58,9 +72,12 @@ public class EditItemDetailActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.edit_toolbar);
         setSupportActionBar(toolbar);
 
-        nameEditText    = (EditText) findViewById(R.id.edit_name);
-        descEditText    = (EditText) findViewById(R.id.edit_desc);
-        doneSwitch      = (Switch) findViewById(R.id.switch_done);
+        nameEditText      = (EditText) findViewById(R.id.edit_name);
+        descEditText      = (EditText) findViewById(R.id.edit_desc);
+        subtaskEditText   = (EditText) findViewById(R.id.edit_subtask_name);
+        doneSwitch        = (Switch) findViewById(R.id.switch_done);
+        subtaskDoneSwitch = (Switch) findViewById(R.id.switch_subtask_done);
+        addSubtaskBtn     = (Button) findViewById(R.id.btn_add_subtask);
 
         // Intent that called this activity
         Intent callingIntent    = getIntent();
@@ -97,6 +114,47 @@ public class EditItemDetailActivity extends AppCompatActivity
                 }
             }
         });
+
+        //Setting up recycler view
+        subtasksRecycler = (RecyclerView) findViewById(R.id.recycler_edit_subtasks);
+        TodoItem item = contentManager.getTodoItem(uiIdx);
+        List<Subtask> subtasks = (item != null) ? item.getSubtasks() : new ArrayList();
+        subtaskListAdapter = new SubtaskListTmpAdapter(this, uiIdx, subtasks);
+        subtasksRecycler.setLayoutManager(new LinearLayoutManager(this));
+        subtasksRecycler.setAdapter(subtaskListAdapter);
+
+
+        //Setting up swipe to remove
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(subtaskListAdapter);
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(subtasksRecycler);
+
+        UpdateList();
+
+        addSubtaskBtn.setOnClickListener((View v) -> {
+            Subtask subtask = new Subtask(subtaskDoneSwitch.isChecked(), subtaskEditText.getText().toString());
+            List<Subtask> tmpSubtasks = subtaskListAdapter.getTmpSubtasks();
+            tmpSubtasks.add(subtask);
+            subtaskListAdapter.setTmpSubtasks(tmpSubtasks);
+            UpdateList();
+            Log.d(LOG_TAG, "Added Subtask");
+            //clear stuff out
+            subtaskEditText.setText("");
+            subtaskDoneSwitch.setChecked(false);
+        });
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        if(getIntent().getExtras().getBoolean(getString(R.string.intent_create_item))){
+            subtaskListAdapter.setTmpSubtasks(new ArrayList<>());
+            subtaskListAdapter.setUiIdx(uiIdx);
+        }
+
+        UpdateList();
     }
 
     @Override
@@ -125,12 +183,13 @@ public class EditItemDetailActivity extends AppCompatActivity
         {
             if(isNewItem)
             {
-                contentManager.addTodoItem(nameEditText.getText().toString(), descEditText.getText().toString(), doneSwitch.isChecked());
+                contentManager.addTodoItem(nameEditText.getText().toString(), descEditText.getText().toString(), subtaskListAdapter.getTmpSubtasks(), doneSwitch.isChecked());
             }
             else
             {
                 contentManager.setName(uiIdx, nameEditText.getText().toString());
                 contentManager.setDesc(uiIdx, descEditText.getText().toString());
+                contentManager.setSubtasks(uiIdx, subtaskListAdapter.getTmpSubtasks());
                 contentManager.setDone(uiIdx, doneSwitch.isChecked());
             }
         }
@@ -140,4 +199,5 @@ public class EditItemDetailActivity extends AppCompatActivity
         return true;
     }
 
+    private void UpdateList(){ subtasksRecycler.setAdapter(subtaskListAdapter);}
 }

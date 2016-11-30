@@ -15,4 +15,5 @@ public class TODOLIST_DB_COLUMNS implements BaseColumns
     public static final String COLUMN_NAME_NAME     = "name";
     public static final String COLUMN_NAME_DESC     = "desc";
     public static final String COLUMN_NAME_DONE     = "done";
+    public static final String COLUMN_NAME_SUBTASKS = "subtasks";
 };

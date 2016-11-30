@@ -1,5 +1,7 @@
 package me.kainoseto.todo.Content;
 
+import java.util.List;
+
 /**
  * Created by Kainoa on 10/14/16.
  */
@@ -11,13 +13,15 @@ public class TodoItem
     private String name;
     private String description;
     private boolean done;
+    private List<Subtask> subtasks;
 
-    public TodoItem(int id, int uiIdx, String name, String description, boolean done)
+    public TodoItem(int id, int uiIdx, String name, String description, List<Subtask> subtasks, boolean done)
     {
         this.id = id;
         this.uiIdx = uiIdx;
         this.name = name;
         this.description = description;
+        this.subtasks = subtasks;
         this.done = done;
     }
 
@@ -50,4 +54,8 @@ public class TodoItem
     public int getUiIdx() { return uiIdx; }
 
     public void setUidIdx(int uiIdx) { this.uiIdx = uiIdx; }
+
+    public List<Subtask> getSubtasks(){return this.subtasks;}
+
+    public void setSubtasks(List<Subtask> subtasks){this.subtasks = subtasks;}
 }
