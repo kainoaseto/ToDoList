@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import java.util.Collections;
 import java.util.List;
 
 import me.kainoseto.todo.Callback.ItemTouchHelperAdapter;
@@ -76,7 +77,6 @@ public class SubtaskListTmpAdapter extends RecyclerView.Adapter<SubtaskItemHolde
         holder.checkMark.setChecked(currItem.isDone());
         holder.checkMark.setOnClickListener(v -> {
             currItem.setDone(holder.checkMark.isChecked());
-            //TODO: Perhaps create a replace util method
             tmpSubtasks.remove(position);
             tmpSubtasks.add(position, currItem);
         });
