@@ -2,6 +2,7 @@ package me.kainoseto.todo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
@@ -10,18 +11,23 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 
 import com.facebook.stetho.Stetho;
 
+import java.util.List;
+
+import me.kainoseto.todo.Calendar.GoogleCalendarManager;
 import me.kainoseto.todo.Callback.SimpleItemTouchHelperCallback;
 import me.kainoseto.todo.Content.TodoContentManager;
 import me.kainoseto.todo.Database.ContentManager;
 import me.kainoseto.todo.Preferences.PreferencesManager;
 import me.kainoseto.todo.UI.TodoListAdapter;
+import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks
 {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -30,6 +36,7 @@ public class MainActivity extends AppCompatActivity
     Stetho.Initializer initializer;
 
     private ContentManager contentManager;
+    private GoogleCalendarManager calendarManager;
 
     /* TODO: Setup a proper theme management system by having a base layout all go off it
        a theme manager class can set which theme and it will update for all activities based
@@ -106,6 +113,10 @@ public class MainActivity extends AppCompatActivity
             contentManager = TodoContentManager.getInstance();
         }
 
+        //TODO: Check if google calendar functionality has been selected. If it has been selected and is enabled then initialize GoogleCalendarManager. Otherwise redirect to first time screen.
+        calendarManager = GoogleCalendarManager.getInstance(getApplicationContext());
+        //TODO REVISE ABOVE
+
         todoListView        = (RecyclerView) findViewById(R.id.listRecycler);
         listAdapter         = new TodoListAdapter(this);
 
@@ -121,9 +132,20 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onStart(){
+        super.onStart();
+        //TODO: More calendar stuff
+        calendarManager.makeApiCall(this);
+    }
+
+    @Override
     protected void onResume()
     {
         super.onResume();
+
+        //TODO: More calendar stuff
+        calendarManager.makeApiCall(this);
+
         if(preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false))
         {
             setTheme(R.style.LightTheme_NoActionBar);
@@ -138,9 +160,52 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle(preferencesManager.getSharedPref().getString(PreferencesManager.KEY_LISTNAME, "ToDo"));
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        calendarManager.handleOnActivityResult(requestCode, resultCode, data, this);
+    }
+
+    /**
+     * Respond to requests for permissions at runtime for API 23 and above.
+     * @param requestCode The request code passed in
+     *     requestPermissions(android.app.Activity, String, int, String[])
+     * @param permissions The requested permissions. Never null.
+     * @param grantResults The grant results for the corresponding permissions
+     *     which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    /**
+     * Callback for when a permission is granted using the EasyPermissions
+     * library.
+     * @param requestCode The request code associated with the requested
+     *         permission
+     * @param list The requested permission list. Never null.
+     */
+    @Override
+    public void onPermissionsGranted(int requestCode, List<String> perms) {
+        Log.d(LOG_TAG, "Permissions granted with code " + requestCode);
+    }
+
+    /**
+     * Callback for when a permission is granted using the EasyPermissions
+     * library.
+     * @param requestCode The request code associated with the requested
+     *         permission
+     * @param list The requested permission list. Never null.
+     */
+    @Override
+    public void onPermissionsDenied(int requestCode, List<String> perms) {
+        Log.w(LOG_TAG, "Permissions denied with code " + requestCode);
+    }
+
     public void UpdateList()
     {
         todoListView.setAdapter(listAdapter);
     }
-
 }
