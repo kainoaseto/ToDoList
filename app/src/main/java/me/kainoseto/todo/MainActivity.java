@@ -19,6 +19,8 @@ import com.facebook.stetho.Stetho;
 
 import java.util.List;
 
+import me.kainoseto.todo.Calendar.CalendarAware;
+import me.kainoseto.todo.Calendar.CalendarEvent;
 import me.kainoseto.todo.Calendar.GoogleCalendarManager;
 import me.kainoseto.todo.Callback.SimpleItemTouchHelperCallback;
 import me.kainoseto.todo.Content.TodoContentManager;
@@ -27,7 +29,7 @@ import me.kainoseto.todo.Preferences.PreferencesManager;
 import me.kainoseto.todo.UI.TodoListAdapter;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks
+public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks, CalendarAware
 {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -132,19 +134,12 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     }
 
     @Override
-    protected void onStart(){
-        super.onStart();
-        //TODO: More calendar stuff
-        calendarManager.makeApiCall(this);
-    }
-
-    @Override
     protected void onResume()
     {
         super.onResume();
 
         //TODO: More calendar stuff
-        calendarManager.makeApiCall(this);
+        calendarManager.makeApiCall(this, this);
 
         if(preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false))
         {
@@ -163,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        calendarManager.handleOnActivityResult(requestCode, resultCode, data, this);
+        calendarManager.handleOnActivityResult(requestCode, resultCode, data, this, this);
     }
 
     /**
@@ -180,28 +175,26 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
-    /**
-     * Callback for when a permission is granted using the EasyPermissions
-     * library.
-     * @param requestCode The request code associated with the requested
-     *         permission
-     * @param list The requested permission list. Never null.
-     */
+    //Handlers for easy permissions
     @Override
     public void onPermissionsGranted(int requestCode, List<String> perms) {
         Log.d(LOG_TAG, "Permissions granted with code " + requestCode);
     }
 
-    /**
-     * Callback for when a permission is granted using the EasyPermissions
-     * library.
-     * @param requestCode The request code associated with the requested
-     *         permission
-     * @param list The requested permission list. Never null.
-     */
     @Override
     public void onPermissionsDenied(int requestCode, List<String> perms) {
         Log.w(LOG_TAG, "Permissions denied with code " + requestCode);
+    }
+
+    //Callback from Google Calendar Sync
+    @Override
+    public void onGetCalendarItemsResult(List<CalendarEvent> events) {
+        Log.d(LOG_TAG, "Received Calendar Items");
+    }
+
+    @Override
+    public void onPostCalendarItemsResult() {
+        Log.d(LOG_TAG, "Completed adding new calendar item");
     }
 
     public void UpdateList()

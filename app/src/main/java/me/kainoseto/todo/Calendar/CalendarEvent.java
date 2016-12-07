@@ -12,12 +12,13 @@ public class CalendarEvent {
     private String title;
     private String description;
     private DateTime startDate;
+    private DateTime endDate;
 
-
-    public CalendarEvent(String title, String description, DateTime startDate){
+    public CalendarEvent(String title, String description, DateTime startDate, DateTime endDate){
         this.title = title;
         this.description = description;
         this.startDate = startDate;
+        this.endDate = endDate;
     }
 
     public String getTitle() {
@@ -42,5 +43,13 @@ public class CalendarEvent {
 
     public void setStartDate(DateTime startDate) {
         this.startDate = startDate;
+    }
+
+    public DateTime getendDate() {
+        return endDate;
+    }
+
+    public void setendDate(DateTime endDate) {
+        this.endDate = endDate;
     }
 }
