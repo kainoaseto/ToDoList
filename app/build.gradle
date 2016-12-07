@@ -48,5 +48,6 @@ dependencies {
     compile('com.google.apis:google-api-services-calendar:v3-rev225-1.22.0') {
         exclude group: 'org.apache.httpcomponents'
     }
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.5'
     testCompile 'junit:junit:4.12'
 }

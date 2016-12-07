@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Log.w(LOG_TAG, "Permissions denied with code " + requestCode);
     }
 
-    //Callback from Google Calendar Sync
+    //Callbacks from Google Calendar Sync
     @Override
     public void onGetCalendarItemsResult(List<CalendarEvent> events) {
         Log.d(LOG_TAG, "Received Calendar Items");
@@ -195,6 +195,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     public void onPostCalendarItemsResult() {
         Log.d(LOG_TAG, "Completed adding new calendar item");
+    }
+
+    @Override
+    public void onDeleteCalendarItemResult() {
+        Log.d(LOG_TAG, "Completed deleting a calendar item");
     }
 
     public void UpdateList()

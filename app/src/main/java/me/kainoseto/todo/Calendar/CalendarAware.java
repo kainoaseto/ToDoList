@@ -19,4 +19,9 @@ public interface CalendarAware {
      * Called when PostCalendarItemTask finishes inserting an item into a calendar
      */
     void onPostCalendarItemsResult();
+
+    /**
+     * Called when DeleteCalendarItemTask finsishes deleting an item from a calendar
+     */
+    void onDeleteCalendarItemResult();
 }

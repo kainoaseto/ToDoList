@@ -14,8 +14,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 
-import org.apache.commons.codec.binary.Base32;
-
 import java.io.IOException;
 
 import me.kainoseto.todo.Calendar.CalendarAware;
@@ -28,34 +26,34 @@ import me.kainoseto.todo.Util.StringUtil;
  * Created by TYLER on 12/6/2016.
  */
 
-public class PostCalendarItemTask extends AsyncTask {
+public class DeleteCalendarItemTask extends AsyncTask {
     private com.google.api.services.calendar.Calendar mService;
     private Exception mLastError;
     private Activity mActivity;
-    private Base32 base32 = new Base32(true);
     private CalendarAware mCalendarAware;
-    private CalendarEvent mCalendarEvent;
 
     private static final String APP_NAME = "TodoList";
     private static final String LOG_TAG = GetCalendarItemsTask.class.getCanonicalName();
     private String CALENDAR_NAME;
+    private String mEventId;
 
-    public PostCalendarItemTask(GoogleAccountCredential credential, Activity activity, CalendarAware calendarAware, String calendarName, CalendarEvent calendarEvent){
+    public DeleteCalendarItemTask(GoogleAccountCredential credential, Activity activity, CalendarAware calendarAware, String calendarName, String title){
         super();
         HttpTransport transport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
         mService = new com.google.api.services.calendar.Calendar.Builder(transport, jsonFactory, credential).setApplicationName(APP_NAME).build();
         mActivity = activity;
         mCalendarAware = calendarAware;
-        mCalendarEvent = calendarEvent;
+        mEventId = StringUtil.formatCalendarItemId(title);
+
         CALENDAR_NAME = calendarName;
     }
 
     @Override
     protected Object doInBackground(Object[] params) {
         try{
-            postEventToCalendar();
-            mCalendarAware.onPostCalendarItemsResult(); //Notifying activty that the item has been created
+            deleteEventFromCalendar();
+            mCalendarAware.onDeleteCalendarItemResult(); //Notifying activty that the item has been deleted
         }catch(Exception e){
             mLastError = e;
             cancel(true);
@@ -63,29 +61,19 @@ public class PostCalendarItemTask extends AsyncTask {
         return null;
     }
 
-    private void postEventToCalendar() throws IOException {
-        Event event = new Event()
-                .setSummary(mCalendarEvent.getTitle())
-                .setDescription(mCalendarEvent.getDescription());
-
-        EventDateTime startDateTime = new EventDateTime().setDateTime(mCalendarEvent.getStartDate());
-        event.setStart(startDateTime);
-
-        EventDateTime endDateTime = new EventDateTime().setDateTime(mCalendarEvent.getendDate());
-        event.setEnd(endDateTime);
-        event.setId(StringUtil.formatCalendarItemId(mCalendarEvent.getTitle()));
-        mService.events().insert(CALENDAR_NAME, event).execute();
+    private void deleteEventFromCalendar() throws IOException {
+        mService.events().delete(CALENDAR_NAME, mEventId).execute();
     }
 
     @Override
     protected void onPreExecute(){
-        Log.d(LOG_TAG, "Preparing to run PostCalendarItemTask");
+        Log.d(LOG_TAG, "Preparing to run DeleteCalendarItemTask");
     }
 
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-        Log.d(LOG_TAG, "PostCalendarItem finished executingTask");
+        Log.d(LOG_TAG, "DeleteCalendarItemTask finished executing");
     }
 
     @Override
@@ -102,7 +90,7 @@ public class PostCalendarItemTask extends AsyncTask {
                 Log.e(LOG_TAG, "The following error occurred:\n" + mLastError.getMessage());
             }
         }else{
-            Log.e(LOG_TAG, "PostCalendarItem Request Canceled");
+            Log.e(LOG_TAG, "DeleteCalendarItem Request Canceled");
         }
     }
 }

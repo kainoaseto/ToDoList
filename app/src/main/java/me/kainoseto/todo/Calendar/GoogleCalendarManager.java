@@ -35,6 +35,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import me.kainoseto.todo.Calendar.Tasks.DeleteCalendarItemTask;
 import me.kainoseto.todo.Calendar.Tasks.GetCalendarItemsTask;
 import me.kainoseto.todo.Calendar.Tasks.PostCalendarItemTask;
 import me.kainoseto.todo.Content.TodoItem;
@@ -74,10 +75,6 @@ public class GoogleCalendarManager {
         mCredential = GoogleAccountCredential.usingOAuth2(context, Arrays.asList(SCOPES)).setBackOff(new ExponentialBackOff());
     }
 
-    public void getEvents(){
-        //TODO call makeApiCall with get async task
-    }
-
     /**
      *  Gets permissions and credentials for the Google Calendar API, then runs an async task.
      *
@@ -94,7 +91,9 @@ public class GoogleCalendarManager {
             Toast.makeText(context, "No network connection available", Toast.LENGTH_SHORT).show();
         }else{
             CalendarEvent calendarEvent = new CalendarEvent("Test","Test", new DateTime(System.currentTimeMillis()), new DateTime(System.currentTimeMillis()));
-            new PostCalendarItemTask(mCredential, activity, calendarAware, CALENDAR_NAME, calendarEvent).execute();
+            //new PostCalendarItemTask(mCredential, activity, calendarAware, CALENDAR_NAME, calendarEvent).execute();
+            new DeleteCalendarItemTask(mCredential, activity, calendarAware, CALENDAR_NAME, "Test").execute();
+            //new GetCalendarItemsTask(mCredential, activity, calendarAware, CALENDAR_NAME).execute();
         }
     }
 
