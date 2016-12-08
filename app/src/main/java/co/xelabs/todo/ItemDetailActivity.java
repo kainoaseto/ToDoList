@@ -11,8 +11,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.google.api.client.util.DateTime;
@@ -35,13 +37,14 @@ public class ItemDetailActivity extends AppCompatActivity {
     private TextView startTimeText;
     private TextView endDateText;
     private TextView endTimeText;
+    private TableLayout dateTimesLayout;
 
     private String name;
     private String description;
     private boolean done;
     private int uiIdx;
     private DateTime startDateTime;
-    private DateTime endDateTIme;
+    private DateTime endDateTime;
 
     private ContentManager contentManager;
     private TodoItem currentItem;
@@ -81,6 +84,28 @@ public class ItemDetailActivity extends AppCompatActivity {
         startTimeText           = (TextView) findViewById(R.id.itemview_start_time);
         endDateText             = (TextView) findViewById(R.id.itemview_end_date);
         endTimeText             = (TextView) findViewById(R.id.itemview_end_time);
+        dateTimesLayout         = (TableLayout) findViewById(R.id.itemview_datetimes);
+
+
+        startDateTime   = currentItem.getStartDate();
+        endDateTime     = currentItem.getEndDate();
+
+        if(startDateTime != null && endDateTime != null)
+        {
+            dateTimesLayout.setVisibility(View.VISIBLE);
+
+            Date startDate  = new Date(startDateTime.getValue());
+            Date endDate    =  new Date(endDateTime.getValue());
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(startDate);
+            startDateText.setText(generateDateString(cal));
+            startTimeText.setText(generateTimeString(cal));
+
+            cal.setTime(endDate);
+            endDateText.setText(generateDateString(cal));
+            endTimeText.setText(generateTimeString(cal));
+        }
 
         nameView.setText(name);
         descriptionView.setText(description);
@@ -175,19 +200,25 @@ public class ItemDetailActivity extends AppCompatActivity {
         description     = currentItem.getDescription();
         done            = currentItem.isDone();
 
+        startDateTime   = currentItem.getStartDate();
+        endDateTime     = currentItem.getEndDate();
 
+        if(startDateTime != null && endDateTime != null)
+        {
+            dateTimesLayout.setVisibility(View.VISIBLE);
 
-        Date startDate  = new Date(currentItem.getStartDate().getValue());
-        Date endDate    =  new Date(currentItem.getEndDate().getValue());
+            Date startDate  = new Date(startDateTime.getValue());
+            Date endDate    =  new Date(endDateTime.getValue());
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(startDate);
-        startDateText.setText(generateDateString(cal));
-        startTimeText.setText(generateTimeString(cal));
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(startDate);
+            startDateText.setText(generateDateString(cal));
+            startTimeText.setText(generateTimeString(cal));
 
-        cal.setTime(endDate);
-        endDateText.setText(generateDateString(cal));
-        endTimeText.setText(generateTimeString(cal));
+            cal.setTime(endDate);
+            endDateText.setText(generateDateString(cal));
+            endTimeText.setText(generateTimeString(cal));
+        }
 
         nameView.setText(name);
         descriptionView.setText(description);
