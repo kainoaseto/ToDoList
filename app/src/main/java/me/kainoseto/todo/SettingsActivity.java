@@ -11,9 +11,12 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceCategory;
+import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -43,6 +46,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         contentManager = TodoContentManager.getInstance();
 
         sharedPreferences = MainActivity.preferencesManager.getSharedPref();
+
+        getFragmentManager().beginTransaction().add(android.R.id.content,
+                new GeneralPreferenceFragment()).commit();
     }
 
     private void setupActionBar() {
@@ -68,7 +74,17 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                         (Boolean)value
                 );
                 return true;
-            } else {
+            }
+            else if (preference.getKey().equals("pref_enable_gcal")) {
+                MainActivity.preferencesManager.storeValue(
+                        PreferencesManager.KEY_MAINPREFS,
+                        PreferencesManager.PRIVATE_MODE,
+                        preference.getKey(),
+                        (Boolean)value
+                );
+                return true;
+            }
+            else {
                 MainActivity.preferencesManager.storeValue(
                         PreferencesManager.KEY_MAINPREFS,
                         PreferencesManager.PRIVATE_MODE,
@@ -122,13 +138,20 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     };
 
+    // TODO Make the defaultVal class ambiguous
+    private static void bindPreferenceSummaryToValue(Preference preference, Class<?> type)
+    {
+        bindPreferenceSummaryToValue(preference, type, "");
+    }
 
-    private static void bindPreferenceSummaryToValue(Preference preference, Class<?> type) {
+
+    private static void bindPreferenceSummaryToValue(Preference preference, Class<?> type, String defaultVal)
+    {
         preference.setOnPreferenceChangeListener(sBindPreferenceSummaryToValueListener);
 
         if(type == String.class) {
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
-                    sharedPreferences.getString(preference.getKey(), "ToDo"));
+                    sharedPreferences.getString(preference.getKey(), defaultVal));
         } else if (type == Boolean.class) {
             sBindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                     sharedPreferences.getBoolean(preference.getKey(), false));
@@ -143,8 +166,16 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             addPreferencesFromResource(R.xml.pref_general);
             setHasOptionsMenu(true);
 
-            bindPreferenceSummaryToValue(findPreference("light_theme_pref"), Boolean.class);
-            bindPreferenceSummaryToValue(findPreference("list_name_pref"), String.class);
+            PreferenceCategory generalCategory = (PreferenceCategory) findPreference("general_settings");
+            generalCategory.removePreference(findPreference("light_theme_pref"));
+
+            SwitchPreference calendarSync = (SwitchPreference) findPreference("pref_enable_gcal");
+            calendarSync.setChecked(false);
+
+            //bindPreferenceSummaryToValue(findPreference("light_theme_pref"), Boolean.class);
+            bindPreferenceSummaryToValue(findPreference("list_name_pref"), String.class, "ToDo");
+            bindPreferenceSummaryToValue(findPreference("pref_calendar_name"), String.class, getString(R.string.pref_calendar_name_summary));
+            bindPreferenceSummaryToValue(findPreference("pref_enable_gcal"), Boolean.class);
 
             Preference resetButton = findPreference("reset_pref");
             resetButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -153,6 +184,18 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                     contentManager.resetContent();
                     MainActivity.preferencesManager.clearPrefs(PreferencesManager.KEY_MAINPREFS, PreferencesManager.PRIVATE_MODE);
                     Toast.makeText(getContext(), R.string.reset_app_toast, Toast.LENGTH_SHORT).show();
+                    Intent returnMain = new Intent(getActivity(), MainActivity.class);
+                    startActivity(returnMain);
+
+                    return false;
+                }
+            });
+
+            Preference enableCal = findPreference("pref_enable_gcal");
+            enableCal.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    // TODO: Google login/logout code
 
                     return false;
                 }
@@ -163,7 +206,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
             if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
+                startActivity(new Intent(getActivity(), MainActivity.class));
+                getActivity().overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 return true;
             }
             return super.onOptionsItemSelected(item);
@@ -179,45 +223,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 Intent intent = NavUtils.getParentActivityIntent(this);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 NavUtils.navigateUpTo(this, intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
             return true;
         }
         return super.onMenuItemSelected(featureId, item);
     }
-
-    @Override
-    public boolean onIsMultiPane() {
-        return isXLargeTablet(this);
-    }
-
-    @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public void onBuildHeaders(List<Header> target) {
-        loadHeadersFromResource(R.xml.pref_headers, target);
-    }
-
-    /**
-     * This method stops fragment injection in malicious applications.
-     * Make sure to deny any unknown fragments here.
-     */
-    protected boolean isValidFragment(String fragmentName) {
-        return PreferenceFragment.class.getName().equals(fragmentName)
-                || GeneralPreferenceFragment.class.getName().equals(fragmentName)
-                //|| DataSyncPreferenceFragment.class.getName().equals(fragmentName)
-                || NotificationPreferenceFragment.class.getName().equals(fragmentName);
-    }
-
-    /**
-     * Helper method to determine if the device has an extra-large screen. For
-     * example, 10" tablets are extra-large.
-     */
-    private static boolean isXLargeTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_XLARGE;
-    }
-
-
 
     /**
      * This fragment shows notification preferences only. It is used when the

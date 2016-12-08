@@ -20,6 +20,8 @@ public class PreferencesManager
     // Keys should always be defined here for reference
     public static final String KEY_LISTNAME              = "list_name_pref";
     public static final String KEY_THEME                 = "light_theme_pref";
+    public static final String KEY_CALNAME               = "pref_calendar_name";
+    public static final String KEY_GCAL_ENABLE           = "pref_enable_gcal";
     public static final String KEY_MAINPREFS             = "main_prefs";
 
     public PreferencesManager(Context context)

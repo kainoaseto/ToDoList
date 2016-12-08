@@ -3,6 +3,7 @@ package me.kainoseto.todo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -57,6 +58,8 @@ public class EditItemDetailActivity extends AppCompatActivity
 
     CoordinatorLayout cl;
 
+    private AppCompatActivity activity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -87,6 +90,8 @@ public class EditItemDetailActivity extends AppCompatActivity
 
         isNewItem = intentData.getBoolean(getString(R.string.intent_create_item));
 
+        activity = this;
+
         if (!isNewItem)
         {
             uiIdx           = intentData.getInt(getString(R.string.intent_idx));
@@ -102,15 +107,25 @@ public class EditItemDetailActivity extends AppCompatActivity
             getSupportActionBar().setTitle("New Item");
         }
 
-        ImageButton settingsBtn = (ImageButton) findViewById(R.id.save_toolbar_button);
-        settingsBtn.setOnClickListener(new View.OnClickListener() {
+        ImageButton saveBtn = (ImageButton) findViewById(R.id.save_toolbar_button);
+        saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!UpdateDB()) {
                     Toast.makeText(getApplicationContext(), R.string.item_fail_to_save, Toast.LENGTH_LONG).show();
                 } else {
-                    Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
-                    startActivity(detailViewIntent);
+                    Intent returnIntent;
+                    if(isNewItem)
+                        returnIntent = new Intent(getApplicationContext(), MainActivity.class);
+                    else
+                    {
+                        returnIntent = new Intent(getApplicationContext(), ItemDetailActivity.class);
+                        returnIntent.putExtra(getString(R.string.intent_idx), uiIdx);
+                    }
+
+                    returnIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    NavUtils.navigateUpTo(activity, returnIntent);
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                 }
             }
         });
@@ -164,6 +179,18 @@ public class EditItemDetailActivity extends AppCompatActivity
         /* The back button was pressed, maybe check if there were changes in any of the fields
             and if there are changes present then ask them here if they would like to save
         */
+        Intent returnIntent;
+        if(isNewItem)
+            returnIntent = new Intent(getApplicationContext(), MainActivity.class);
+        else
+        {
+            returnIntent = new Intent(getApplicationContext(), ItemDetailActivity.class);
+            returnIntent.putExtra(getString(R.string.intent_idx), uiIdx);
+        }
+
+        returnIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        NavUtils.navigateUpTo(activity, returnIntent);
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
 
     }
 
@@ -174,8 +201,8 @@ public class EditItemDetailActivity extends AppCompatActivity
 
         // We need to be returning to our last activity which might not be detailViewIntent...
         // Maybe convert this to a fragment to handle lifecycle better
-        Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(detailViewIntent);
+        //Intent detailViewIntent = new Intent(getApplicationContext(), MainActivity.class);
+        //startActivity(detailViewIntent);
     }
 
     private boolean UpdateDB() {

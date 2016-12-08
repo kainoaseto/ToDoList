@@ -13,6 +13,7 @@ import me.kainoseto.todo.Content.TodoContentManager;
 import me.kainoseto.todo.Content.TodoItem;
 import me.kainoseto.todo.Database.ContentManager;
 import me.kainoseto.todo.ItemDetailActivity;
+import me.kainoseto.todo.MainActivity;
 import me.kainoseto.todo.R;
 
 public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> implements ItemTouchHelperAdapter
@@ -102,6 +103,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoItemHolder> implem
 
                 detailViewIntent.putExtra(context.getString(R.string.intent_idx), currentItem.getUiIdx());
                 context.startActivity(detailViewIntent);
+                ((MainActivity)context).overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);;
             }
         });
 
