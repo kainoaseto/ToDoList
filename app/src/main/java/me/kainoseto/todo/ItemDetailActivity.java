@@ -35,6 +35,10 @@ public class ItemDetailActivity extends AppCompatActivity {
     private TextView descriptionView;
     private Switch doneView;
     private RecyclerView subtaskRecyclerView;
+    private TextView startDateText;
+    private TextView startTimeText;
+    private TextView endDateText;
+    private TextView endTimeText;
 
     private String name;
     private String description;
@@ -51,12 +55,8 @@ public class ItemDetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        if(MainActivity.preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false)) {
-            setTheme(R.style.LightTheme_NoActionBar);
-        } else {
-            setTheme(R.style.DarkTheme_NoActionBar);
-        }
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
 
@@ -78,6 +78,11 @@ public class ItemDetailActivity extends AppCompatActivity {
         name            = currentItem.getName();
         description     = currentItem.getDescription();
         done            = currentItem.isDone();
+
+        startDateText           = (TextView) findViewById(R.id.itemview_start_date);
+        startTimeText           = (TextView) findViewById(R.id.itemview_start_time);
+        endDateText             = (TextView) findViewById(R.id.itemview_end_date);
+        endTimeText             = (TextView) findViewById(R.id.itemview_end_time);
 
         nameView.setText(name);
         descriptionView.setText(description);
