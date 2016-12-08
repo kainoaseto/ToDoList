@@ -262,7 +262,7 @@ public class EditItemDetailActivity extends AppCompatActivity
                 startTimeText.setText(timeFormat.format(cal.getTime()));
 
                 cal.setTime(endDate);
-                endDateText.setText(timeFormat.format(cal.getTime()));
+                endDateText.setText(dateFormat.format(cal.getTime()));
                 endTimeText.setText(timeFormat.format(cal.getTime()));
 
                 datetimeTableLayout.setVisibility(View.VISIBLE);

@@ -111,7 +111,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             startTimeText.setText(timeFormat.format(cal.getTime()));
 
             cal.setTime(endDate);
-            endDateText.setText(timeFormat.format(cal.getTime()));
+            endDateText.setText(dateFormat.format(cal.getTime()));
             endTimeText.setText(timeFormat.format(cal.getTime()));
         }
 
@@ -224,7 +224,7 @@ public class ItemDetailActivity extends AppCompatActivity {
             startTimeText.setText(timeFormat.format(cal.getTime()));
 
             cal.setTime(endDate);
-            endDateText.setText(timeFormat.format(cal.getTime()));
+            endDateText.setText(dateFormat.format(cal.getTime()));
             endTimeText.setText(timeFormat.format(cal.getTime()));
         }
 
