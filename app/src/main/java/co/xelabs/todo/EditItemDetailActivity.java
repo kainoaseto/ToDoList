@@ -253,6 +253,12 @@ public class EditItemDetailActivity extends AppCompatActivity
 
             if(startDateTime != null && endDateTime != null)
             {
+                enableDateTimeCheckBox.setEnabled(true);
+
+                if(syncWithGCal) {
+                    enableGoogleCalSyncCheckBox.setEnabled(true);
+                }
+
                 Date startDate  = new Date(startDateTime.getValue());
                 Date endDate    =  new Date(endDateTime.getValue());
 
