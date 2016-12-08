@@ -27,6 +27,7 @@ import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -252,16 +253,19 @@ public class EditItemDetailActivity extends AppCompatActivity
 
             if(startDateTime != null && endDateTime != null)
             {
-                Calendar now = Calendar.getInstance();
-                String currentDate = dateFormat.format(now.getTime());
-                String currentTime = timeFormat.format(now.getTime());
+                Date startDate  = new Date(startDateTime.getValue());
+                Date endDate    =  new Date(endDateTime.getValue());
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(startDate);
+                startDateText.setText(dateFormat.format(cal.getTime()));
+                startTimeText.setText(timeFormat.format(cal.getTime()));
+
+                cal.setTime(endDate);
+                endDateText.setText(timeFormat.format(cal.getTime()));
+                endTimeText.setText(timeFormat.format(cal.getTime()));
 
                 datetimeTableLayout.setVisibility(View.VISIBLE);
-
-                startDateText.setText(currentDate);
-                startTimeText.setText(currentTime);
-                endDateText.setText(currentDate);
-                endTimeText.setText(currentTime);
             }
 
             nameEditText.setText(name);
@@ -391,6 +395,8 @@ public class EditItemDetailActivity extends AppCompatActivity
                 contentManager.setSubtasks(uiIdx, subtaskListAdapter.getTmpSubtasks());
                 contentManager.setDone(uiIdx, doneSwitch.isChecked());
                 contentManager.setSyncWithGCal(uiIdx, enableGoogleCalSyncCheckBox.isChecked());
+                contentManager.setStartDate(uiIdx, startListener.getDateTime());
+                contentManager.setEndDate(uiIdx, endListener.getDateTime());
             }
         }
         else {

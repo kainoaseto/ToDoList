@@ -19,8 +19,10 @@ import android.widget.TextView;
 
 import com.google.api.client.util.DateTime;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import co.xelabs.todo.Content.TodoContentManager;
 import co.xelabs.todo.Content.TodoItem;
@@ -54,6 +56,9 @@ public class ItemDetailActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private Toolbar toolbar;
+
+    private SimpleDateFormat dateFormat;
+    private SimpleDateFormat timeFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -90,6 +95,9 @@ public class ItemDetailActivity extends AppCompatActivity {
         startDateTime   = currentItem.getStartDate();
         endDateTime     = currentItem.getEndDate();
 
+        dateFormat = new SimpleDateFormat("E MMM dd, yyyy", Locale.US);
+        timeFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+
         if(startDateTime != null && endDateTime != null)
         {
             dateTimesLayout.setVisibility(View.VISIBLE);
@@ -99,12 +107,12 @@ public class ItemDetailActivity extends AppCompatActivity {
 
             Calendar cal = Calendar.getInstance();
             cal.setTime(startDate);
-            startDateText.setText(generateDateString(cal));
-            startTimeText.setText(generateTimeString(cal));
+            startDateText.setText(dateFormat.format(cal.getTime()));
+            startTimeText.setText(timeFormat.format(cal.getTime()));
 
             cal.setTime(endDate);
-            endDateText.setText(generateDateString(cal));
-            endTimeText.setText(generateTimeString(cal));
+            endDateText.setText(timeFormat.format(cal.getTime()));
+            endTimeText.setText(timeFormat.format(cal.getTime()));
         }
 
         nameView.setText(name);
@@ -212,12 +220,12 @@ public class ItemDetailActivity extends AppCompatActivity {
 
             Calendar cal = Calendar.getInstance();
             cal.setTime(startDate);
-            startDateText.setText(generateDateString(cal));
-            startTimeText.setText(generateTimeString(cal));
+            startDateText.setText(dateFormat.format(cal.getTime()));
+            startTimeText.setText(timeFormat.format(cal.getTime()));
 
             cal.setTime(endDate);
-            endDateText.setText(generateDateString(cal));
-            endTimeText.setText(generateTimeString(cal));
+            endDateText.setText(timeFormat.format(cal.getTime()));
+            endTimeText.setText(timeFormat.format(cal.getTime()));
         }
 
         nameView.setText(name);
