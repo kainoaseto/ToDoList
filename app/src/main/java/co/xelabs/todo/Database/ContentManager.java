@@ -26,6 +26,8 @@ public interface ContentManager {
     boolean setSubtasks(int uiIdx, List<Subtask> subtasks);
     boolean setSubtaskForTodoItem(int uiIdx, int subtaskIdx, Subtask subtask);
     boolean setSyncWithGCal(int uiIdx, boolean syncWithGcal);
+    boolean setStartDate(int uiIdx, DateTime startDate);
+    boolean setEndDate(int uiIdx, DateTime endDate);
     void swapUiIdx(int firstIdx, int secondIdx);
     void syncWithCalendarEvents(List<CalendarEvent> events);
 }

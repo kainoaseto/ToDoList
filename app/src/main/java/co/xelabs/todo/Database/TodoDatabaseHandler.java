@@ -171,6 +171,18 @@ public class TodoDatabaseHandler extends DatabaseHelper
         return updateToDoItem(uiIdx, cv);
     }
 
+    public boolean updateStartDate(int uiIdx, DateTime startDate){
+        ContentValues cv = new ContentValues();
+        cv. put(COLUMN_NAME_START_DATE, DateTimeUtil.safeToStringRfc3339(startDate));
+        return updateToDoItem(uiIdx, cv);
+    }
+
+    public boolean updateEndDate(int uiIdx, DateTime endDate) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME_END_DATE, DateTimeUtil.safeToStringRfc3339(endDate));
+        return updateToDoItem(uiIdx, cv);
+    }
+
     public void getAllItems(ArrayList<TodoItem> items)
     {
         ArrayList<ContentValues> data = super.getAllContent(TABLE_NAME, FULL_PROJECTION, COLUMN_NAME_UI_IDX+" ASC");

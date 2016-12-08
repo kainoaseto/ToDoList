@@ -232,6 +232,22 @@ public class TodoContentManager implements ContentManager
     }
 
     @Override
+    public boolean setEndDate(int uiIdx, DateTime endDate) {
+        TodoItem item = todoItems.get(uiIdx);
+        item.setEndDate(endDate);
+        todoItems.set(uiIdx, item);
+        return databaseHandler.updateEndDate(uiIdx, endDate);
+    }
+
+    @Override
+    public boolean setStartDate(int uiIdx, DateTime startDate) {
+        TodoItem item = todoItems.get(uiIdx);
+        item.setEndDate(startDate);
+        todoItems.set(uiIdx, item);
+        return databaseHandler.updateEndDate(uiIdx, startDate);
+    }
+
+    @Override
     public void syncWithCalendarEvents(List<CalendarEvent> events) {
         for(CalendarEvent event : events){
             if(!todoListContainsTitle(event.getTitle())){
