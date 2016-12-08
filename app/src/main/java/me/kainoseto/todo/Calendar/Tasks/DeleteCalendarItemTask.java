@@ -11,13 +11,10 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.EventDateTime;
 
 import java.io.IOException;
 
 import me.kainoseto.todo.Calendar.CalendarAware;
-import me.kainoseto.todo.Calendar.CalendarEvent;
 import me.kainoseto.todo.Calendar.GoogleCalendarManager;
 import me.kainoseto.todo.Calendar.PlayServicesUtil;
 import me.kainoseto.todo.Util.StringUtil;

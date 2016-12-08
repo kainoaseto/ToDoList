@@ -63,6 +63,8 @@ public class GoogleCalendarManager {
     private static final String CALENDAR_NAME = "primary";
     private static final String LOG_TAG = GoogleCalendarManager.class.getCanonicalName();
 
+    private static AsyncTask currOp;
+
     public static GoogleCalendarManager getInstance(Context context) {
         if (null == sSingleton) {
             //TODO See what else needs to be done here
@@ -76,24 +78,63 @@ public class GoogleCalendarManager {
     }
 
     /**
-     *  Gets permissions and credentials for the Google Calendar API, then runs an async task.
+     * Sets up the necessary permissions and credentials to use the Google Calendar api, then retrieves a weeks worth of events.
+     * NOTE: The calling activity needs to call handleOnActivityResult inside onActivityResult in order to handle navigation to the google sign in activity
      *
      * @param activity - activity to display google account related UI on.
-     * @param calendarAware - class that will handle the result of the calendar api call. Can be the same as the activity.
+     * @param calendarAware - class that contains callbacks for when async processing concludes
+     * @param calendarName - name of the calendar
      */
-    public void makeApiCall(Activity activity, CalendarAware calendarAware) {
+    public synchronized void getCalendarItems(Activity activity, CalendarAware calendarAware, String calendarName){
+        currOp = new GetCalendarItemsTask(mCredential, activity, calendarAware, calendarName);
+        makeApiCall(activity);
+    }
+
+    /**
+     * Sets up the necessary permissions and credentials to use the Google Calendar api, then creates a new event within the specified calendar.
+     * NOTE: The calling activity needs to call handleOnActivityResult inside onActivityResult in order to handle navigation to the google sign in activity
+     *
+     * @param activity - activity to display google account related UI on.
+     * @param calendarAware - class that contains callbacks for when async processing concludes
+     * @param calendarName - name of the calendar
+     * @param calendarEvent - contains data about the new calendar event
+     */
+     public synchronized void createCalendarItem(Activity activity, CalendarAware calendarAware, String calendarName, CalendarEvent calendarEvent){
+         currOp = new PostCalendarItemTask(mCredential, activity, calendarAware, calendarName, calendarEvent);
+         makeApiCall(activity);
+    }
+
+    /**
+     * Sets up the necessary permissions and credentials to use the Google Calendar api, then deletes an event with the specified title
+     * NOTE: The calling activity needs to call handleOnActivityResult inside onActivityResult in order to handle navigation to the google sign in activity
+     *
+     * @param activity - activity to display google account related UI on.
+     * @param calendarAware - class that contains callbacks for when async processing concludes
+     * @param calendarName - name of the calendar
+     * @param title - title of the event to delete
+     */
+    public synchronized void deleteCalendarItem(Activity activity, CalendarAware calendarAware, String calendarName, String title){
+        currOp = new DeleteCalendarItemTask(mCredential, activity, calendarAware, calendarName, title);
+        makeApiCall(activity);
+    }
+
+    /**
+     *  Gets permissions and credentials for the Google Calendar API, then runs an async task.
+     *  NOTE: The calling activity needs to call handleOnActivityResult inside onActivityResult in order to handle navigation to the google sign in activity
+     *  synchronized so nobody else updates currOp while making an API call
+     *
+     * @param activity - activity to display google account related UI on.
+     */
+    private void makeApiCall(Activity activity) {
         Context context = activity.getApplicationContext();
         if (!PlayServicesUtil.isGooglePlayServicesAvailable(activity.getApplicationContext())) {
             PlayServicesUtil.acquireGooglePlayServices(activity);
         }else if(mCredential.getSelectedAccountName() == null){
-            chooseAccount(activity, calendarAware);
+            chooseAccount(activity);
         }else if(!isDeviceOnline(context)){
             Toast.makeText(context, "No network connection available", Toast.LENGTH_SHORT).show();
         }else{
-            CalendarEvent calendarEvent = new CalendarEvent("Test","Test", new DateTime(System.currentTimeMillis()), new DateTime(System.currentTimeMillis()));
-            //new PostCalendarItemTask(mCredential, activity, calendarAware, CALENDAR_NAME, calendarEvent).execute();
-            new DeleteCalendarItemTask(mCredential, activity, calendarAware, CALENDAR_NAME, "Test").execute();
-            //new GetCalendarItemsTask(mCredential, activity, calendarAware, CALENDAR_NAME).execute();
+            currOp.execute();
         }
     }
 
@@ -104,15 +145,14 @@ public class GoogleCalendarManager {
      * @param resultCode
      * @param data
      * @param activity
-     * @param calendarAware - needed to retry make api call after redirects complete
      */
-    public void handleOnActivityResult(int requestCode, int resultCode, Intent data, Activity activity, CalendarAware calendarAware){
+    public void handleOnActivityResult(int requestCode, int resultCode, Intent data, Activity activity){
         switch(requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != Activity.RESULT_OK) {
                     Toast.makeText(activity.getApplicationContext(),"This app requires Google Play Services. Please install Google Play Services on your device and relaunch this app.", Toast.LENGTH_SHORT);
                 } else {
-                    makeApiCall(activity, calendarAware);
+                    makeApiCall(activity);
                 }
                 break;
             case REQUEST_ACCOUNT_PICKER:
@@ -124,13 +164,13 @@ public class GoogleCalendarManager {
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.apply();
                         mCredential.setSelectedAccountName(accountName);
-                        makeApiCall(activity, calendarAware);
+                        makeApiCall(activity);
                     }
                 }
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == Activity.RESULT_OK) {
-                    makeApiCall(activity, calendarAware);
+                    makeApiCall(activity);
                 }
                 break;
         }
@@ -148,12 +188,12 @@ public class GoogleCalendarManager {
      * is granted.
      */
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
-    private void chooseAccount(Activity activity, CalendarAware calendarAware) {
+    private void chooseAccount(Activity activity) {
         if (EasyPermissions.hasPermissions(activity, Manifest.permission.GET_ACCOUNTS)) {
             String accountName = activity.getPreferences(Context.MODE_PRIVATE).getString(PREF_ACCOUNT_NAME, null);
             if (accountName != null) {
                 mCredential.setSelectedAccountName(accountName);
-                makeApiCall(activity, calendarAware);
+                makeApiCall(activity);
             } else {
                 // Start a dialog from which the user can choose an account
                 activity.startActivityForResult(
@@ -176,82 +216,5 @@ public class GoogleCalendarManager {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         return (networkInfo != null && networkInfo.isConnected());
-    }
-
-    /**
-     * An asynchronous task that handle making the Google Calendar API call that inserts a new event.
-     */
-    public class PostEventTask extends AsyncTask<Void, Void, Boolean>{
-        private com.google.api.services.calendar.Calendar mService;
-        private Exception mLastError;
-        private Activity mActivity;
-        private TodoItem mTodoItem;
-
-        PostEventTask(GoogleAccountCredential credential, Activity activity, TodoItem todoItem){
-            HttpTransport transport = AndroidHttp.newCompatibleTransport();
-            JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
-            mService = new com.google.api.services.calendar.Calendar.Builder(transport, jsonFactory, credential).setApplicationName(APP_NAME).build();
-            mActivity = activity;
-            mTodoItem = todoItem;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            try{
-                addEventToCalendar();
-                return true;
-            }catch(Exception e){
-                mLastError = e;
-                cancel(true);
-                return false;
-            }
-        }
-
-        private void addEventToCalendar() throws IOException {
-            Event content = new Event();
-            EventDateTime dt = new EventDateTime();
-            dt.setDateTime(new DateTime(System.currentTimeMillis()));
-            content.setSummary(mTodoItem.getName());
-            content.setDescription(generateDescription());
-            content.setStart(dt);
-
-            Event ret = mService.events().insert(CALENDAR_NAME, content).execute();
-            System.out.println("");
-        }
-
-        private String generateDescription(){
-            //TODO: Generate the description from subtasks
-            StringBuilder desc = new StringBuilder();
-            return "";
-        }
-
-        @Override
-        protected void onPreExecute(){
-            Log.d(LOG_TAG, "Preparing to run PostEventTask");
-        }
-
-        @Override
-        protected void onPostExecute(Boolean success) {
-            super.onPostExecute(success);
-            Log.d(LOG_TAG, "Finished running PostEventTask");
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            if(mLastError != null){
-                if (mLastError instanceof GooglePlayServicesAvailabilityIOException) {
-                    PlayServicesUtil.showGooglePlayServicesAvailabilityErrorDialog( ((GooglePlayServicesAvailabilityIOException) mLastError).getConnectionStatusCode(), mActivity);
-                } else if (mLastError instanceof UserRecoverableAuthIOException) {
-                    mActivity.startActivityForResult(
-                            ((UserRecoverableAuthIOException) mLastError).getIntent(),
-                            GoogleCalendarManager.REQUEST_AUTHORIZATION);
-                } else {
-                    Log.e(LOG_TAG, "The following error occurred:\n" + mLastError.getMessage());
-                }
-            }else{
-                Log.e(LOG_TAG, "PostEventTask Request Canceled");
-            }
-        }
     }
 }

@@ -27,7 +27,7 @@ import me.kainoseto.todo.Calendar.PlayServicesUtil;
 /**
  * An asynchronous task that handle making the Google Calendar API call that retrieves upcomming events.
  */
-public class GetCalendarItemsTask extends AsyncTask<Void, Void, List<CalendarEvent>>{
+public class GetCalendarItemsTask extends AsyncTask{
     private com.google.api.services.calendar.Calendar mService;
     private Exception mLastError;
     private Activity mActivity;
@@ -48,7 +48,7 @@ public class GetCalendarItemsTask extends AsyncTask<Void, Void, List<CalendarEve
     }
 
     @Override
-    protected List<CalendarEvent> doInBackground(Void... params) {
+    protected List<CalendarEvent> doInBackground(Object[] params) {
         try{
             List<CalendarEvent> events = getEventsFromApi();
             mCalendarAware.onGetCalendarItemsResult(events); //Updating activity with synced results
@@ -86,8 +86,8 @@ public class GetCalendarItemsTask extends AsyncTask<Void, Void, List<CalendarEve
     }
 
     @Override
-    protected void onPostExecute(List<CalendarEvent> output){
-        Log.d(LOG_TAG, "GetCalendarItemsTask returned "+output.size()+" results");
+    protected void onPostExecute(Object output){
+        //Log.d(LOG_TAG, "GetCalendarItemsTask returned "+output.size()+" results");
     }
 
     @Override
