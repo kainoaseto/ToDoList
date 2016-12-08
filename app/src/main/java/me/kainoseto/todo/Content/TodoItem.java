@@ -1,5 +1,7 @@
 package me.kainoseto.todo.Content;
 
+import com.google.api.client.util.DateTime;
+
 import java.util.List;
 
 /**
@@ -14,6 +16,9 @@ public class TodoItem
     private String description;
     private boolean done;
     private List<Subtask> subtasks;
+
+    private DateTime startDate;
+    private DateTime endDate;
 
     public TodoItem(int id, int uiIdx, String name, String description, List<Subtask> subtasks, boolean done)
     {
@@ -58,4 +63,12 @@ public class TodoItem
     public List<Subtask> getSubtasks(){return this.subtasks;}
 
     public void setSubtasks(List<Subtask> subtasks){this.subtasks = subtasks;}
+
+    public DateTime getEndDate() {return endDate;}
+
+    public void setEndDate(DateTime endDate) {this.endDate = endDate;}
+
+    public DateTime getStartDate() {return startDate;}
+
+    public void setStartDate(DateTime startDate) {this.startDate = startDate;}
 }

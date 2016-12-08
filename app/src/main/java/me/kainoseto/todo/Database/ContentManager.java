@@ -1,5 +1,7 @@
 package me.kainoseto.todo.Database;
 
+import com.google.api.client.util.DateTime;
+
 import java.util.List;
 
 import me.kainoseto.todo.Content.Subtask;
@@ -12,7 +14,7 @@ import me.kainoseto.todo.Content.TodoItem;
 public interface ContentManager {
     void refreshContent();
     void resetContent();
-    boolean addTodoItem(String name, String desc, List<Subtask> subtasks, boolean done);
+    boolean addTodoItem(String name, String desc, List<Subtask> subtasks, boolean done, DateTime startDate, DateTime endDate);
     void removeTodoItem(int uiIdx);
     TodoItem getTodoItem(int uiIdx);
     int getSize();

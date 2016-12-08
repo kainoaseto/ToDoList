@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -39,6 +40,7 @@ import me.kainoseto.todo.Calendar.Tasks.DeleteCalendarItemTask;
 import me.kainoseto.todo.Calendar.Tasks.GetCalendarItemsTask;
 import me.kainoseto.todo.Calendar.Tasks.PostCalendarItemTask;
 import me.kainoseto.todo.Content.TodoItem;
+import me.kainoseto.todo.MainActivity;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -48,6 +50,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class GoogleCalendarManager {
     private static GoogleCalendarManager sSingleton;
+    private static SharedPreferences sharedPreferences;
 
     //Vars for Google Calendar API
     private GoogleAccountCredential mCredential;
@@ -67,8 +70,8 @@ public class GoogleCalendarManager {
 
     public static GoogleCalendarManager getInstance(Context context) {
         if (null == sSingleton) {
-            //TODO See what else needs to be done here
             sSingleton = new GoogleCalendarManager(context);
+            sharedPreferences = MainActivity.preferencesManager.getSharedPref();
         }
         return sSingleton;
     }
@@ -119,6 +122,21 @@ public class GoogleCalendarManager {
     }
 
     /**
+     * Ensures Google Play Services are installed, a google account is selected, and the device has internet access
+     *
+     * @param activity
+     */
+    public void checkGoogleCalendarRequirements(Activity activity){
+        if (!PlayServicesUtil.isGooglePlayServicesAvailable(activity.getApplicationContext())) {
+            PlayServicesUtil.acquireGooglePlayServices(activity);
+        }else if(mCredential.getSelectedAccountName() == null){
+            chooseAccount(activity);
+        }else if(!isDeviceOnline(activity.getApplicationContext())){
+            Toast.makeText(activity.getApplicationContext(), "No network connection available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
      *  Gets permissions and credentials for the Google Calendar API, then runs an async task.
      *  NOTE: The calling activity needs to call handleOnActivityResult inside onActivityResult in order to handle navigation to the google sign in activity
      *  synchronized so nobody else updates currOp while making an API call
@@ -145,14 +163,19 @@ public class GoogleCalendarManager {
      * @param resultCode
      * @param data
      * @param activity
+     * @param loginOnly - if true then redirect to check calendar requirements
      */
-    public void handleOnActivityResult(int requestCode, int resultCode, Intent data, Activity activity){
+    public void handleOnActivityResult(int requestCode, int resultCode, Intent data, Activity activity, boolean loginOnly){
         switch(requestCode) {
             case REQUEST_GOOGLE_PLAY_SERVICES:
                 if (resultCode != Activity.RESULT_OK) {
                     Toast.makeText(activity.getApplicationContext(),"This app requires Google Play Services. Please install Google Play Services on your device and relaunch this app.", Toast.LENGTH_SHORT);
                 } else {
-                    makeApiCall(activity);
+                    if(loginOnly){
+                        checkGoogleCalendarRequirements(activity);
+                    }else{
+                        makeApiCall(activity);
+                    }
                 }
                 break;
             case REQUEST_ACCOUNT_PICKER:
@@ -164,18 +187,34 @@ public class GoogleCalendarManager {
                         editor.putString(PREF_ACCOUNT_NAME, accountName);
                         editor.apply();
                         mCredential.setSelectedAccountName(accountName);
-                        makeApiCall(activity);
+                        if(loginOnly){
+                            checkGoogleCalendarRequirements(activity);
+                        }else{
+                            makeApiCall(activity);
+                        }
                     }
                 }
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == Activity.RESULT_OK) {
-                    makeApiCall(activity);
+                    if(loginOnly){
+                        checkGoogleCalendarRequirements(activity);
+                    }else{
+                        makeApiCall(activity);
+                    }
                 }
                 break;
         }
     }
 
+    public static boolean isCalendarEnabled(){
+        //getting shared prefs to avoid NPE if we dont create a calendar manager
+        return MainActivity.preferencesManager.getSharedPref().getBoolean("pref_enable_gcal", false);
+    }
+
+    public String getCalendarName(){
+        return sharedPreferences.getString("pref_calendar_name", "primary");
+    }
 
     /**
      * Attempts to set the account used with the API credentials. If an account

@@ -2,8 +2,6 @@ package me.kainoseto.todo.Calendar;
 
 import com.google.api.client.util.DateTime;
 
-import java.util.Date;
-
 /**
  * Created by TYLER on 12/3/2016.
  */

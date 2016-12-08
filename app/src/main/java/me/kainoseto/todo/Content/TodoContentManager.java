@@ -1,13 +1,22 @@
 package me.kainoseto.todo.Content;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
+
+import com.google.api.client.util.DateTime;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import me.kainoseto.todo.Calendar.CalendarAware;
+import me.kainoseto.todo.Calendar.CalendarEvent;
+import me.kainoseto.todo.Calendar.GoogleCalendarManager;
 import me.kainoseto.todo.Database.ContentManager;
 import me.kainoseto.todo.Database.TodoDatabaseHandler;
+import me.kainoseto.todo.MainActivity;
+
 import java.lang.Math;
 import java.util.List;
 
@@ -22,6 +31,12 @@ public class TodoContentManager implements ContentManager
     private static ArrayList<TodoItem>         todoItems;
     private static TodoDatabaseHandler  databaseHandler;
 
+    //BEGIN - Fields used when calendar enabled
+    private static GoogleCalendarManager calendarManager;
+    private static CalendarAware calendarAware;
+    private static Activity activity;
+    //END - Fields used when calendar enabled
+
     private static TodoContentManager singleton;
 
     private TodoContentManager(Context context)
@@ -31,7 +46,12 @@ public class TodoContentManager implements ContentManager
             databaseHandler = new TodoDatabaseHandler(context);
     }
 
-    public static void initInstance(Context context) {
+    /**
+     * Initializes instance of TodoContentManager. If using GoogleCalendar, pass this an activity
+     *
+     * @param context
+     */
+    public static void initInstance(Context context, CalendarAware calAware) {
         if (singleton != null)
         {
             Log.e(LOG_TAG, "Tried to initialize content manager but it is already initialized!");
@@ -41,6 +61,12 @@ public class TodoContentManager implements ContentManager
         singleton = new TodoContentManager(context);
         todoItems.clear();
         databaseHandler.getAllItems(todoItems);
+
+        if(GoogleCalendarManager.isCalendarEnabled()){
+            activity = (Activity) context;
+            calendarAware = calAware;
+            calendarManager = GoogleCalendarManager.getInstance(activity);
+        }
     }
 
     public static TodoContentManager getInstance()
@@ -66,8 +92,9 @@ public class TodoContentManager implements ContentManager
         databaseHandler.getAllItems(todoItems);
     }
 
+    //TODO: Add fields for start/end date
     @Override
-    public boolean addTodoItem(String name, String desc, List<Subtask> subtasks, boolean done)
+    public boolean addTodoItem(String name, String desc, List<Subtask> subtasks, boolean done, DateTime startDate, DateTime endDate)
     {
         int uiIdx = getSize();
 
@@ -76,12 +103,21 @@ public class TodoContentManager implements ContentManager
             return false;
 
         todoItems.add(uiIdx, new TodoItem(new BigDecimal(rowId).intValueExact(), uiIdx, name, desc, subtasks, done));
+
+        if(GoogleCalendarManager.isCalendarEnabled()){
+            calendarManager.createCalendarItem(activity, calendarAware, calendarManager.getCalendarName(), new CalendarEvent(name, desc, startDate, endDate));
+        }
+
         return true;
     }
 
     @Override
     public void removeTodoItem(int uiIdx)
     {
+        if(GoogleCalendarManager.isCalendarEnabled()){
+            calendarManager.deleteCalendarItem(activity, calendarAware, calendarManager.getCalendarName(), todoItems.get(uiIdx).getName());
+        }
+
         databaseHandler.removeToDoItem(uiIdx);
         todoItems.remove(uiIdx);
 
@@ -115,6 +151,10 @@ public class TodoContentManager implements ContentManager
     public boolean setName(int uiIdx, String name)
     {
         TodoItem item = todoItems.get(uiIdx);
+        if(GoogleCalendarManager.isCalendarEnabled()){
+            calendarManager.deleteCalendarItem(activity, calendarAware, calendarManager.getCalendarName(), todoItems.get(uiIdx).getName());
+            calendarManager.createCalendarItem(activity, calendarAware, calendarManager.getCalendarName(), new CalendarEvent(name, item.getDescription(), item.getStartDate(), item.getEndDate()));
+        }
         item.setName(name);
         todoItems.set(uiIdx, item);
         return databaseHandler.updateName(uiIdx, name);
@@ -124,6 +164,10 @@ public class TodoContentManager implements ContentManager
     public boolean setDesc(int uiIdx, String desc)
     {
         TodoItem item = todoItems.get(uiIdx);
+        if(GoogleCalendarManager.isCalendarEnabled()){
+            calendarManager.deleteCalendarItem(activity, calendarAware, calendarManager.getCalendarName(), todoItems.get(uiIdx).getName());
+            calendarManager.createCalendarItem(activity, calendarAware, calendarManager.getCalendarName(), new CalendarEvent(item.getName(), desc, item.getStartDate(), item.getEndDate()));
+        }
         item.setDescription(desc);
         todoItems.set(uiIdx, item);
         return databaseHandler.updateDesc(uiIdx, desc);

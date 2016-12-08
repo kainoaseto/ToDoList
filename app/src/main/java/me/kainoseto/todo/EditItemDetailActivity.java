@@ -210,7 +210,8 @@ public class EditItemDetailActivity extends AppCompatActivity
         {
             if(isNewItem)
             {
-                contentManager.addTodoItem(nameEditText.getText().toString(), descEditText.getText().toString(), subtaskListAdapter.getTmpSubtasks(), doneSwitch.isChecked());
+                //TODO: Add datetime values
+                contentManager.addTodoItem(nameEditText.getText().toString(), descEditText.getText().toString(), subtaskListAdapter.getTmpSubtasks(), doneSwitch.isChecked(), null, null);
             }
             else
             {

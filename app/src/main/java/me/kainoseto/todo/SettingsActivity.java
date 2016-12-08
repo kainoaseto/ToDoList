@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import java.util.List;
 
+import me.kainoseto.todo.Calendar.GoogleCalendarManager;
 import me.kainoseto.todo.Content.TodoContentManager;
 import me.kainoseto.todo.Database.ContentManager;
 import me.kainoseto.todo.Preferences.PreferencesManager;
@@ -37,6 +38,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
     static SharedPreferences sharedPreferences;
     private static ContentManager contentManager;
+    private static GoogleCalendarManager calendarManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +49,19 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         sharedPreferences = MainActivity.preferencesManager.getSharedPref();
 
+        //getting an instance of calendar manager to be used for handling google login
+        calendarManager = GoogleCalendarManager.getInstance(getApplicationContext());
+
         getFragmentManager().beginTransaction().add(android.R.id.content,
                 new GeneralPreferenceFragment()).commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        //Handling navigation back from google sign in activity
+        calendarManager.handleOnActivityResult(requestCode, resultCode, data, this, true);
+
     }
 
     private void setupActionBar() {
@@ -170,11 +183,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             generalCategory.removePreference(findPreference("light_theme_pref"));
 
             SwitchPreference calendarSync = (SwitchPreference) findPreference("pref_enable_gcal");
-            calendarSync.setChecked(false);
+            calendarSync.setChecked(sharedPreferences.getBoolean("pref_enable_gcal", false));
+
+
 
             //bindPreferenceSummaryToValue(findPreference("light_theme_pref"), Boolean.class);
             bindPreferenceSummaryToValue(findPreference("list_name_pref"), String.class, "ToDo");
-            bindPreferenceSummaryToValue(findPreference("pref_calendar_name"), String.class, getString(R.string.pref_calendar_name_summary));
+            bindPreferenceSummaryToValue(findPreference("pref_calendar_name"), String.class, getString(R.string.pref_default_calendar_name));
             bindPreferenceSummaryToValue(findPreference("pref_enable_gcal"), Boolean.class);
 
             Preference resetButton = findPreference("reset_pref");
@@ -195,11 +210,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             enableCal.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    // TODO: Google login/logout code
-
+                    if(sharedPreferences.getBoolean(preference.getKey(), false)){
+                        calendarManager.checkGoogleCalendarRequirements(getActivity());
+                    }
                     return false;
                 }
             });
+
         }
 
         @Override

@@ -49,5 +49,6 @@ dependencies {
         exclude group: 'org.apache.httpcomponents'
     }
     compile group: 'commons-codec', name: 'commons-codec', version: '1.5'
+    compile 'com.wdullaer:materialdatetimepicker:3.0.0'
     testCompile 'junit:junit:4.12'
 }

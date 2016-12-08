@@ -9,7 +9,6 @@ import org.apache.commons.codec.binary.Base32;
 public class StringUtil {
     private static Base32 base32 = new Base32(true);
 
-
     /**
      * Creates a valid calendar item id according to api documentation: <a>https://developers.google.com/google-apps/calendar/v3/reference/events/delete</a>
      *
@@ -30,5 +29,7 @@ public class StringUtil {
             return paddedResult.toString();
         }
     }
+
+    //TODO: Add method to generate description that contains subtasks
 
 }

@@ -111,13 +111,11 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         // Initialize the singleton contentManager
         if( contentManager == null )
         {
-            TodoContentManager.initInstance(getApplicationContext());
+            TodoContentManager.initInstance(this, this);
             contentManager = TodoContentManager.getInstance();
         }
 
-        //TODO: Check if google calendar functionality has been selected. If it has been selected and is enabled then initialize GoogleCalendarManager. Otherwise redirect to first time screen.
         calendarManager = GoogleCalendarManager.getInstance(getApplicationContext());
-        //TODO REVISE ABOVE
 
         todoListView        = (RecyclerView) findViewById(R.id.listRecycler);
         listAdapter         = new TodoListAdapter(this);
@@ -137,10 +135,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     protected void onResume()
     {
         super.onResume();
-
-        //TODO: More calendar stuff
-        calendarManager.makeApiCall(this, this);
-
         if(preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false))
         {
             setTheme(R.style.LightTheme_NoActionBar);
@@ -158,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        calendarManager.handleOnActivityResult(requestCode, resultCode, data, this, this);
+        calendarManager.handleOnActivityResult(requestCode, resultCode, data, this, false);
     }
 
     /**

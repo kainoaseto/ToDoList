@@ -13,10 +13,12 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
+import com.google.api.services.calendar.model.EventReminder;
 
 import org.apache.commons.codec.binary.Base32;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import me.kainoseto.todo.Calendar.CalendarAware;
 import me.kainoseto.todo.Calendar.CalendarEvent;
@@ -64,17 +66,29 @@ public class PostCalendarItemTask extends AsyncTask {
     }
 
     private void postEventToCalendar() throws IOException {
-        Event event = new Event()
-                .setSummary(mCalendarEvent.getTitle())
-                .setDescription(mCalendarEvent.getDescription());
+        if((null != mCalendarEvent.getStartDate()) && (null != mCalendarEvent.getendDate())){
+            Event event = new Event()
+                    .setSummary(mCalendarEvent.getTitle())
+                    .setDescription(mCalendarEvent.getDescription());
 
-        EventDateTime startDateTime = new EventDateTime().setDateTime(mCalendarEvent.getStartDate());
-        event.setStart(startDateTime);
+            EventDateTime startDateTime = new EventDateTime().setDateTime(mCalendarEvent.getStartDate());
+            event.setStart(startDateTime);
 
-        EventDateTime endDateTime = new EventDateTime().setDateTime(mCalendarEvent.getendDate());
-        event.setEnd(endDateTime);
-        event.setId(StringUtil.formatCalendarItemId(mCalendarEvent.getTitle()));
-        mService.events().insert(CALENDAR_NAME, event).execute();
+            EventDateTime endDateTime = new EventDateTime().setDateTime(mCalendarEvent.getendDate());
+            event.setEnd(endDateTime);
+            event.setId(StringUtil.formatCalendarItemId(mCalendarEvent.getTitle()));
+
+            //TODO: Seting one hour warning, eventually needs configurable time
+            EventReminder[] remindersOverides = new EventReminder[]{
+                    new EventReminder().setMethod("popup").setMinutes(60)
+            };
+            Event.Reminders reminders = new Event.Reminders().setUseDefault(false).setOverrides(Arrays.asList(remindersOverides));
+            event.setReminders(reminders);
+
+            mService.events().insert(CALENDAR_NAME, event).execute();
+        }else{
+            Log.w(LOG_TAG, "Not inserting calendar event with title \"" + mCalendarEvent.getTitle()+"\" since it does not have a start and end time");
+        }
     }
 
     @Override
