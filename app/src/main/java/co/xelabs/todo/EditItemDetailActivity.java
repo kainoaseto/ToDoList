@@ -147,6 +147,7 @@ public class EditItemDetailActivity extends AppCompatActivity
         Bundle intentData       = callingIntent.getExtras();
 
         contentManager = TodoContentManager.getInstance();
+        contentManager.UpdateActivity(this);
 
         isNewItem = intentData.getBoolean(getString(R.string.intent_create_item));
 
@@ -253,10 +254,10 @@ public class EditItemDetailActivity extends AppCompatActivity
 
             if(startDateTime != null && endDateTime != null)
             {
-                enableDateTimeCheckBox.setEnabled(true);
+                enableDateTimeCheckBox.setChecked(true);
 
                 if(syncWithGCal) {
-                    enableGoogleCalSyncCheckBox.setEnabled(true);
+                    enableGoogleCalSyncCheckBox.setChecked(true);
                 }
 
                 Date startDate  = new Date(startDateTime.getValue());

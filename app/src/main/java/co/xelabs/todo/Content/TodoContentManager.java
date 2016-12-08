@@ -67,6 +67,11 @@ public class TodoContentManager implements ContentManager
         }
     }
 
+    public void UpdateActivity(Context context)
+    {
+        activity = (Activity) context;
+    }
+
     public static TodoContentManager getInstance()
     {
         if(singleton == null) {
@@ -234,6 +239,12 @@ public class TodoContentManager implements ContentManager
     @Override
     public boolean setEndDate(int uiIdx, DateTime endDate) {
         TodoItem item = todoItems.get(uiIdx);
+        if(GoogleCalendarManager.isCalendarEnabled()){
+            if(null == calendarManager){
+                calendarManager = GoogleCalendarManager.getInstance(activity);
+            }
+            calendarManager.updateCalendarItem(activity, calendarAware, calendarManager.getCalendarName(), item.getName(), new CalendarEvent(item.getName(), item.getCalId(), item.getDescription(), item.getStartDate(), endDate));
+        }
         item.setEndDate(endDate);
         todoItems.set(uiIdx, item);
         return databaseHandler.updateEndDate(uiIdx, endDate);
@@ -242,9 +253,15 @@ public class TodoContentManager implements ContentManager
     @Override
     public boolean setStartDate(int uiIdx, DateTime startDate) {
         TodoItem item = todoItems.get(uiIdx);
-        item.setEndDate(startDate);
+        if(GoogleCalendarManager.isCalendarEnabled()){
+            if(null == calendarManager){
+                calendarManager = GoogleCalendarManager.getInstance(activity);
+            }
+            calendarManager.updateCalendarItem(activity, calendarAware, calendarManager.getCalendarName(), item.getName(), new CalendarEvent(item.getName(), item.getCalId(), item.getDescription(), startDate, item.getEndDate()));
+        }
+        item.setStartDate(startDate);
         todoItems.set(uiIdx, item);
-        return databaseHandler.updateEndDate(uiIdx, startDate);
+        return databaseHandler.updateStartDate(uiIdx, startDate);
     }
 
     @Override

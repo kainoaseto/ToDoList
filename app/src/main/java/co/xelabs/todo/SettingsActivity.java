@@ -53,7 +53,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //Handling navigation back from google sign in activity
-        calendarManager.handleOnActivityResult(requestCode, resultCode, data, this, true);
+        //calendarManager.handleOnActivityResult(requestCode, resultCode, data, this, true);
 
     }
 
@@ -204,7 +204,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if(sharedPreferences.getBoolean(preference.getKey(), false)){
-                        calendarManager.checkGoogleCalendarRequirements(getActivity());
+                        //calendarManager.checkGoogleCalendarRequirements(getActivity());
                     }
                     return false;
                 }

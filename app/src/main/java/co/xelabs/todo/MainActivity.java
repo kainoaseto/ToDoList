@@ -60,16 +60,6 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Remove this since its really hacky and heed the above TODO statement
-        cl = (CoordinatorLayout) findViewById(R.id.actvity_main);
-        if(preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false)) {
-            setTheme(R.style.LightTheme_NoActionBar);
-            cl.setBackgroundColor(ContextCompat.getColor(this, R.color.colorLightBackground));
-        } else {
-            setTheme(R.style.DarkTheme_NoActionBar);
-            cl.setBackgroundColor(ContextCompat.getColor(this, R.color.windowBackground));
-        }
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
@@ -114,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             TodoContentManager.initInstance(this, this);
             contentManager = TodoContentManager.getInstance();
         }
+        contentManager.UpdateActivity(this);
 
         calendarManager = GoogleCalendarManager.getInstance(getApplicationContext());
 
@@ -135,18 +126,9 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     protected void onResume()
     {
         super.onResume();
-        if(preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false))
-        {
-            setTheme(R.style.LightTheme_NoActionBar);
-            cl.setBackgroundColor(ContextCompat.getColor(this, R.color.colorLightBackground));
-        }
-        else
-        {
-            setTheme(R.style.DarkTheme_NoActionBar);
-            cl.setBackgroundColor(ContextCompat.getColor(this, R.color.windowBackground));
-        }
         UpdateList();
         getSupportActionBar().setTitle(preferencesManager.getSharedPref().getString(PreferencesManager.KEY_LISTNAME, "ToDo"));
+        contentManager.UpdateActivity(this);
     }
 
     @Override

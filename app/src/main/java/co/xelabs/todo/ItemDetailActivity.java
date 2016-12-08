@@ -103,16 +103,13 @@ public class ItemDetailActivity extends AppCompatActivity {
             dateTimesLayout.setVisibility(View.VISIBLE);
 
             Date startDate  = new Date(startDateTime.getValue());
-            Date endDate    =  new Date(endDateTime.getValue());
+            Date endDate    = new Date(endDateTime.getValue());
 
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(startDate);
-            startDateText.setText(dateFormat.format(cal.getTime()));
-            startTimeText.setText(timeFormat.format(cal.getTime()));
+            startDateText.setText(dateFormat.format(startDate));
+            startTimeText.setText(timeFormat.format(startDate));
 
-            cal.setTime(endDate);
-            endDateText.setText(dateFormat.format(cal.getTime()));
-            endTimeText.setText(timeFormat.format(cal.getTime()));
+            endDateText.setText(dateFormat.format(endDate));
+            endTimeText.setText(timeFormat.format(endDate));
         }
 
         nameView.setText(name);
@@ -218,14 +215,11 @@ public class ItemDetailActivity extends AppCompatActivity {
             Date startDate  = new Date(startDateTime.getValue());
             Date endDate    =  new Date(endDateTime.getValue());
 
-            Calendar cal = Calendar.getInstance();
-            cal.setTime(startDate);
-            startDateText.setText(dateFormat.format(cal.getTime()));
-            startTimeText.setText(timeFormat.format(cal.getTime()));
+            startDateText.setText(dateFormat.format(startDate));
+            startTimeText.setText(timeFormat.format(startDate));
 
-            cal.setTime(endDate);
-            endDateText.setText(dateFormat.format(cal.getTime()));
-            endTimeText.setText(timeFormat.format(cal.getTime()));
+            endDateText.setText(dateFormat.format(endDate));
+            endTimeText.setText(timeFormat.format(endDate));
         }
 
         nameView.setText(name);

@@ -1,5 +1,7 @@
 package co.xelabs.todo.Database;
 
+import android.content.Context;
+
 import com.google.api.client.util.DateTime;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import co.xelabs.todo.Content.TodoItem;
 public interface ContentManager {
     void refreshContent();
     void resetContent();
+    void UpdateActivity(Context context);
     boolean addTodoItem(String name, String calId, String desc, List<Subtask> subtasks, boolean done, DateTime startDate, DateTime endDate, boolean updateGoogleCal);
     void removeTodoItem(int uiIdx);
     TodoItem getTodoItem(int uiIdx);
