@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/activity_item_detail"
-    tools:context="me.kainoseto.todo.ItemDetailActivity">
+    tools:context="co.xelabs.todo.ItemDetailActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

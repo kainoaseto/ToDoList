@@ -3,7 +3,7 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="me.kainoseto.todo.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="co.xelabs.todo.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_outline_white_24dp"
         android:title="@string/pref_header_general" />
 

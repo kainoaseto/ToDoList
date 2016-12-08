@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.kainoseto.todo">
+    package="co.xelabs.todo">
 
     <permission android:name="android.permission.INTERNET"/>
     <permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/DarkTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="co.xelabs.todo.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/DarkTheme.NoActionBar">
             <intent-filter>
@@ -28,18 +28,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ItemDetailActivity"
+            android:name="co.xelabs.todo.ItemDetailActivity"
             android:theme="@style/DarkTheme.NoActionBar" />
         <activity
-            android:name=".EditItemDetailActivity"
+            android:name="co.xelabs.todo.EditItemDetailActivity"
             android:theme="@style/DarkTheme.NoActionBar" />
         <activity
-            android:name=".SettingsActivity"
+            android:name="co.xelabs.todo.SettingsActivity"
             android:label="@string/title_activity_settings"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName="co.xelabs.todo.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="me.kainoseto.todo.MainActivity" />
+                android:value="co.xelabs.todo.MainActivity" />
         </activity>
     </application>
 
