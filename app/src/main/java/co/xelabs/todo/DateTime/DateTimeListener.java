@@ -43,6 +43,10 @@ public class DateTimeListener implements DatePickerDialog.OnDateSetListener, Tim
         return currentDateTime;
     }
 
+    public void setDateTime(DateTime dateTime){
+        calendar.setTimeInMillis(dateTime.getValue());
+    }
+
     @Override
     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
         //String date = "You picked the following date: "+dayOfMonth+"/"+(++monthOfYear)+"/"+year;
@@ -56,17 +60,18 @@ public class DateTimeListener implements DatePickerDialog.OnDateSetListener, Tim
     @Override
     public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute, int second) {
         Timepoint newTime = view.getSelectedTime();
-
+        int convertedHour= hourOfDay;
         if(hourOfDay > 12)
-            hourOfDay -= 12;
+            convertedHour -= 12;
 
-        String hourString = hourOfDay < 10 ? "0"+hourOfDay : ""+hourOfDay;
+        String hourString = hourOfDay < 10 ? "0"+convertedHour : ""+convertedHour;
         String minuteString = minute < 10 ? "0"+minute : ""+minute;
         String postFix = newTime.isAM() ? "AM" : "PM";
         String time = hourString+ ":" +minuteString+" " + postFix;
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.AM_PM, newTime.isAM() ? Calendar.AM : Calendar.PM);
+        calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+//        calendar.set(Calendar.HOUR, convertedHour);
+//        calendar.set(Calendar.MINUTE, minute);
+//        calendar.set(Calendar.AM_PM, newTime.isAM() ? Calendar.AM : Calendar.PM);
 
         timeView.setText(time);
     }

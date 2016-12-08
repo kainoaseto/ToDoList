@@ -67,9 +67,15 @@ public class TodoContentManager implements ContentManager
         }
     }
 
+    @Override
     public void UpdateActivity(Context context)
     {
         activity = (Activity) context;
+    }
+
+    @Override
+    public void UpdateCalendarAware(CalendarAware calAware) {
+        calendarAware = calAware;
     }
 
     public static TodoContentManager getInstance()
@@ -119,7 +125,7 @@ public class TodoContentManager implements ContentManager
     @Override
     public void removeTodoItem(int uiIdx)
     {
-        if(GoogleCalendarManager.isCalendarEnabled()){
+        if(GoogleCalendarManager.isCalendarEnabled() && getTodoItem(uiIdx).getSyncWIthGcal()){
             if(null == calendarManager){
                 calendarManager = GoogleCalendarManager.getInstance(activity);
             }
@@ -156,10 +162,10 @@ public class TodoContentManager implements ContentManager
     }
 
     @Override
-    public boolean setName(int uiIdx, String name)
+    public boolean setName(int uiIdx, String name, boolean updateGCal)
     {
         TodoItem item = todoItems.get(uiIdx);
-        if(GoogleCalendarManager.isCalendarEnabled()){
+        if(GoogleCalendarManager.isCalendarEnabled() && updateGCal){
             if(null == calendarManager){
                 calendarManager = GoogleCalendarManager.getInstance(activity);
             }
@@ -171,10 +177,10 @@ public class TodoContentManager implements ContentManager
     }
 
     @Override
-    public boolean setDesc(int uiIdx, String desc)
+    public boolean setDesc(int uiIdx, String desc, boolean updateGCal)
     {
         TodoItem item = todoItems.get(uiIdx);
-        if(GoogleCalendarManager.isCalendarEnabled()){
+        if(GoogleCalendarManager.isCalendarEnabled() && updateGCal){
             if(null == calendarManager){
                 calendarManager = GoogleCalendarManager.getInstance(activity);
             }
@@ -231,15 +237,15 @@ public class TodoContentManager implements ContentManager
     public boolean setSyncWithGCal(int uiIdx, boolean syncWithGCal)
     {
         TodoItem item = todoItems.get(uiIdx);
-        item.setDone(syncWithGCal);
+        item.setSyncWithGCal(syncWithGCal);
         todoItems.set(uiIdx, item);
         return databaseHandler.updateGCalSync(uiIdx, syncWithGCal);
     }
 
     @Override
-    public boolean setEndDate(int uiIdx, DateTime endDate) {
+    public boolean setEndDate(int uiIdx, DateTime endDate, boolean updateGCal) {
         TodoItem item = todoItems.get(uiIdx);
-        if(GoogleCalendarManager.isCalendarEnabled()){
+        if(GoogleCalendarManager.isCalendarEnabled() && updateGCal){
             if(null == calendarManager){
                 calendarManager = GoogleCalendarManager.getInstance(activity);
             }
@@ -251,9 +257,9 @@ public class TodoContentManager implements ContentManager
     }
 
     @Override
-    public boolean setStartDate(int uiIdx, DateTime startDate) {
+    public boolean setStartDate(int uiIdx, DateTime startDate, boolean updateGCal) {
         TodoItem item = todoItems.get(uiIdx);
-        if(GoogleCalendarManager.isCalendarEnabled()){
+        if(GoogleCalendarManager.isCalendarEnabled() && updateGCal){
             if(null == calendarManager){
                 calendarManager = GoogleCalendarManager.getInstance(activity);
             }

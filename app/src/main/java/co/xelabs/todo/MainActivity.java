@@ -105,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             contentManager = TodoContentManager.getInstance();
         }
         contentManager.UpdateActivity(this);
+        contentManager.UpdateCalendarAware(this);
 
         calendarManager = GoogleCalendarManager.getInstance(getApplicationContext());
 
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         UpdateList();
         getSupportActionBar().setTitle(preferencesManager.getSharedPref().getString(PreferencesManager.KEY_LISTNAME, "ToDo"));
         contentManager.UpdateActivity(this);
+        contentManager.UpdateCalendarAware(this);
     }
 
     @Override
@@ -167,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     public void onGetCalendarItemsResult(List<CalendarEvent> events) {
         Log.d(LOG_TAG, "Received Calendar Items");
         contentManager.syncWithCalendarEvents(events);
+        //todoListView.setAdapter(listAdapter);
     }
 
     @Override

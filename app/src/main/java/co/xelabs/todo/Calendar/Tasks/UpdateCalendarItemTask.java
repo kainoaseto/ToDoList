@@ -8,6 +8,7 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -62,6 +63,7 @@ public class UpdateCalendarItemTask extends AsyncTask{
     private void updateCalendarItem() throws IOException {
         if((null != mCalendarEvent.getStartDate()) && (null != mCalendarEvent.getendDate())){
             Event event = mService.events().get(CALENDAR_NAME, mCalendarEvent.getId()).execute();
+
 
             EventDateTime startDate = new EventDateTime().setDateTime(mCalendarEvent.getStartDate());
             EventDateTime endDate = new EventDateTime().setDateTime(mCalendarEvent.getendDate());

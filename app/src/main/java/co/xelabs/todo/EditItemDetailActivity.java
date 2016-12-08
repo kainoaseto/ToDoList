@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import co.xelabs.todo.Calendar.GoogleCalendarManager;
 import co.xelabs.todo.Callback.SimpleItemTouchHelperCallback;
 import co.xelabs.todo.Content.Subtask;
 import co.xelabs.todo.Content.TodoContentManager;
@@ -213,7 +214,9 @@ public class EditItemDetailActivity extends AppCompatActivity
         enableDateTimeCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked)
+
+
+                if(isChecked &&((null == startDateTime) && (null == endDateTime)))
                 {
                     Calendar now = Calendar.getInstance();
                     String currentDate = dateFormat.format(now.getTime());
@@ -231,7 +234,17 @@ public class EditItemDetailActivity extends AppCompatActivity
                     endDateText.setOnClickListener(datetimeListener);
                     endTimeText.setOnClickListener(datetimeListener);
 
-                } else {
+                } else if(isChecked && ((null != startDateTime) && (null != endDateTime))){
+                    datetimeTableLayout.setVisibility(View.VISIBLE);
+
+                    startListener.setDateTime(startDateTime);
+                    endListener.setDateTime(endDateTime);
+
+                    startDateText.setOnClickListener(datetimeListener);
+                    startTimeText.setOnClickListener(datetimeListener);
+                    endDateText.setOnClickListener(datetimeListener);
+                    endTimeText.setOnClickListener(datetimeListener);
+                }else {
                     datetimeTableLayout.setVisibility(View.GONE);
                     startDateText.setText("NULL");
                     startTimeText.setText("NULL");
@@ -255,22 +268,18 @@ public class EditItemDetailActivity extends AppCompatActivity
             if(startDateTime != null && endDateTime != null)
             {
                 enableDateTimeCheckBox.setChecked(true);
-
-                if(syncWithGCal) {
-                    enableGoogleCalSyncCheckBox.setChecked(true);
+                if(syncWithGCal){
+                    //enableGoogleCalSyncCheckBox.setChecked(true);
                 }
 
                 Date startDate  = new Date(startDateTime.getValue());
                 Date endDate    =  new Date(endDateTime.getValue());
 
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(startDate);
-                startDateText.setText(dateFormat.format(cal.getTime()));
-                startTimeText.setText(timeFormat.format(cal.getTime()));
+                startDateText.setText(dateFormat.format(startDate));
+                startTimeText.setText(timeFormat.format(startDate));
 
-                cal.setTime(endDate);
-                endDateText.setText(dateFormat.format(cal.getTime()));
-                endTimeText.setText(timeFormat.format(cal.getTime()));
+                endDateText.setText(dateFormat.format(endDate));
+                endTimeText.setText(timeFormat.format(endDate));
 
                 datetimeTableLayout.setVisibility(View.VISIBLE);
             }
@@ -279,9 +288,9 @@ public class EditItemDetailActivity extends AppCompatActivity
             descEditText.setText(description);
             doneSwitch.setChecked(done);
 
-            if(MainActivity.preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_GCAL_ENABLE, false))
+            if(GoogleCalendarManager.isCalendarEnabled()) {
                 enableGoogleCalSyncCheckBox.setChecked(syncWithGCal);
-
+            }
 
             getSupportActionBar().setTitle(name);
 
@@ -396,14 +405,15 @@ public class EditItemDetailActivity extends AppCompatActivity
             }
             else
             {
-                //TODO: Manage google updating
-                contentManager.setName(uiIdx, nameEditText.getText().toString());
-                contentManager.setDesc(uiIdx, descEditText.getText().toString());
+                contentManager.setSyncWithGCal(uiIdx, enableGoogleCalSyncCheckBox.isChecked());
+                boolean updateGcal = contentManager.getTodoItem(uiIdx).getSyncWIthGcal();
+
+                contentManager.setName(uiIdx, nameEditText.getText().toString(), updateGcal);
+                contentManager.setDesc(uiIdx, descEditText.getText().toString(), updateGcal);
                 contentManager.setSubtasks(uiIdx, subtaskListAdapter.getTmpSubtasks());
                 contentManager.setDone(uiIdx, doneSwitch.isChecked());
-                contentManager.setSyncWithGCal(uiIdx, enableGoogleCalSyncCheckBox.isChecked());
-                contentManager.setStartDate(uiIdx, startListener.getDateTime());
-                contentManager.setEndDate(uiIdx, endListener.getDateTime());
+                contentManager.setStartDate(uiIdx, startListener.getDateTime(), updateGcal);
+                contentManager.setEndDate(uiIdx, endListener.getDateTime(), updateGcal);
             }
         }
         else {
