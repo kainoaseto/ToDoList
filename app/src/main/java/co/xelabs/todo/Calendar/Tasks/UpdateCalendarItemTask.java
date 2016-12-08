@@ -35,7 +35,6 @@ public class UpdateCalendarItemTask extends AsyncTask{
     private static final String APP_NAME = "TodoList";
     private static final String LOG_TAG = UpdateCalendarItemTask.class.getCanonicalName();
     private String CALENDAR_NAME;
-    private String OLD_TITLE;
 
     public UpdateCalendarItemTask(GoogleAccountCredential credential, Activity activity, CalendarAware calendarAware, String calendarName, String oldTitle, CalendarEvent calendarEvent){
         super();
@@ -46,7 +45,6 @@ public class UpdateCalendarItemTask extends AsyncTask{
         mCalendarAware = calendarAware;
         mCalendarEvent = calendarEvent;
         CALENDAR_NAME = calendarName;
-        OLD_TITLE = oldTitle;
     }
 
     @Override
