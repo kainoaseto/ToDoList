@@ -27,6 +27,8 @@ import me.kainoseto.todo.Content.TodoItem;
 import me.kainoseto.todo.Database.ContentManager;
 import me.kainoseto.todo.Preferences.PreferencesManager;
 import me.kainoseto.todo.UI.SubtaskListTmpAdapter;
+import me.kainoseto.todo.Util.DateTimeUtil;
+import me.kainoseto.todo.Util.StringUtil;
 
 
 /**
@@ -211,7 +213,7 @@ public class EditItemDetailActivity extends AppCompatActivity
             if(isNewItem)
             {
                 //TODO: Add datetime values
-                contentManager.addTodoItem(nameEditText.getText().toString(), descEditText.getText().toString(), subtaskListAdapter.getTmpSubtasks(), doneSwitch.isChecked(), null, null);
+                contentManager.addTodoItem(nameEditText.getText().toString(), StringUtil.formatCalendarItemId(nameEditText.getText().toString()), descEditText.getText().toString(), subtaskListAdapter.getTmpSubtasks(), doneSwitch.isChecked(), DateTimeUtil.currTime(), DateTimeUtil.currTime());
             }
             else
             {

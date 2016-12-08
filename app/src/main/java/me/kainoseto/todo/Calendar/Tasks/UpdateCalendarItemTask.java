@@ -11,84 +11,86 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
-import com.google.api.services.calendar.model.Events;
+import com.google.api.services.calendar.model.EventDateTime;
+
+import org.apache.commons.codec.binary.Base32;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import me.kainoseto.todo.Calendar.CalendarAware;
 import me.kainoseto.todo.Calendar.CalendarEvent;
 import me.kainoseto.todo.Calendar.GoogleCalendarManager;
 import me.kainoseto.todo.Calendar.PlayServicesUtil;
-import me.kainoseto.todo.Util.DateTimeUtil;
+import me.kainoseto.todo.Util.StringUtil;
 
 /**
- * An asynchronous task that handle making the Google Calendar API call that retrieves upcomming events.
+ * Created by TYLER on 12/8/2016.
  */
-public class GetCalendarItemsTask extends AsyncTask{
+
+public class UpdateCalendarItemTask extends AsyncTask{
     private com.google.api.services.calendar.Calendar mService;
     private Exception mLastError;
     private Activity mActivity;
     private CalendarAware mCalendarAware;
+    private CalendarEvent mCalendarEvent;
 
     private static final String APP_NAME = "TodoList";
-    private static final String LOG_TAG = GetCalendarItemsTask.class.getCanonicalName();
+    private static final String LOG_TAG = UpdateCalendarItemTask.class.getCanonicalName();
     private String CALENDAR_NAME;
+    private String OLD_TITLE;
 
-    public GetCalendarItemsTask(GoogleAccountCredential credential, Activity activity, CalendarAware calendarAware, String calendarName){
+    public UpdateCalendarItemTask(GoogleAccountCredential credential, Activity activity, CalendarAware calendarAware, String calendarName, String oldTitle, CalendarEvent calendarEvent){
         super();
         HttpTransport transport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
         mService = new com.google.api.services.calendar.Calendar.Builder(transport, jsonFactory, credential).setApplicationName(APP_NAME).build();
         mActivity = activity;
         mCalendarAware = calendarAware;
+        mCalendarEvent = calendarEvent;
         CALENDAR_NAME = calendarName;
+        OLD_TITLE = oldTitle;
     }
 
     @Override
-    protected List<CalendarEvent> doInBackground(Object[] params) {
-        try{
-            List<CalendarEvent> events = getEventsFromApi();
-            mCalendarAware.onGetCalendarItemsResult(events); //Updating activity with synced results
-            return events;
-        }catch(Exception e){
+    protected Object doInBackground(Object[] params) {
+        try {
+            updateCalendarItem();
+            mCalendarAware.onUpdateCalendarItemResult();
+        } catch (IOException e) {
             mLastError = e;
             cancel(true);
-            return null;
         }
+        return null;
     }
 
-    private List<CalendarEvent> getEventsFromApi() throws IOException {
-        DateTime now = new DateTime(System.currentTimeMillis());
-        List<CalendarEvent> calendarEvents = new ArrayList<>();
+    private void updateCalendarItem() throws IOException {
+        if((null != mCalendarEvent.getStartDate()) && (null != mCalendarEvent.getendDate())){
+            Event event = mService.events().get(CALENDAR_NAME, mCalendarEvent.getId()).execute();
 
-        Events events = mService.events().list(CALENDAR_NAME)
-                .setTimeMin(now)
-                .setTimeMax(DateTimeUtil.weekFromNow())
-                .setOrderBy("startTime")
-                .setSingleEvents(true)
-                .execute();
+            EventDateTime startDate = new EventDateTime().setDateTime(mCalendarEvent.getStartDate());
+            EventDateTime endDate = new EventDateTime().setDateTime(mCalendarEvent.getendDate());
 
-        List<Event> items = events.getItems();
+            event.setStart(startDate);
+            event.setEnd(endDate);
+            event.setSummary(mCalendarEvent.getTitle());
+            event.setDescription(mCalendarEvent.getDescription());
 
-        for(Event event: items){
-            calendarEvents.add(new CalendarEvent(event.getSummary(), event.getId(), event.getDescription(), event.getStart().getDateTime(), event.getEnd().getDateTime()));
+            mService.events().update(CALENDAR_NAME, event.getId(), event).execute();
+        }else{
+            Log.w(LOG_TAG, "Not updating calendar event with title \"" + mCalendarEvent.getTitle()+"\" since it does not have a start and end time");
         }
-
-        return calendarEvents;
     }
 
     @Override
     protected void onPreExecute(){
-        Log.d(LOG_TAG, "Preparing to run GetCalendarItemsTask");
+        Log.d(LOG_TAG, "Preparing to run UpdateCalendarItemTask");
     }
 
     @Override
-    protected void onPostExecute(Object output){
-        //Log.d(LOG_TAG, "GetCalendarItemsTask returned "+output.size()+" results");
+    protected void onPostExecute(Object o) {
+        super.onPostExecute(o);
+        Log.d(LOG_TAG, "UpdateCalendarItemTask finished executingTask");
     }
 
     @Override
@@ -105,7 +107,7 @@ public class GetCalendarItemsTask extends AsyncTask{
                 Log.e(LOG_TAG, "The following error occurred:\n" + mLastError.getMessage());
             }
         }else{
-            Log.e(LOG_TAG, "GetCalendarItemsTask Request Canceled");
+            Log.e(LOG_TAG, "UpdateCalendarItemTask Request Canceled");
         }
     }
 }

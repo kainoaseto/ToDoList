@@ -4,6 +4,9 @@ import com.google.api.client.util.DateTime;
 
 import java.util.List;
 
+import me.kainoseto.todo.Util.DateTimeUtil;
+import me.kainoseto.todo.Util.StringUtil;
+
 /**
  * Created by Kainoa on 10/14/16.
  */
@@ -12,6 +15,7 @@ public class TodoItem
 {
     private int id;
     private int uiIdx;
+    private String calId;
     private String name;
     private String description;
     private boolean done;
@@ -20,13 +24,17 @@ public class TodoItem
     private DateTime startDate;
     private DateTime endDate;
 
-    public TodoItem(int id, int uiIdx, String name, String description, List<Subtask> subtasks, boolean done)
+    public TodoItem(int id, int uiIdx, String calId, String name, String description, List<Subtask> subtasks, DateTime startDate, DateTime endDate, boolean done)
     {
         this.id = id;
         this.uiIdx = uiIdx;
-        this.name = name;
-        this.description = description;
+        this.calId = calId;
+
+        this.name = StringUtil.catchNullString(name);
+        this.description = StringUtil.catchNullString(description);
         this.subtasks = subtasks;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.done = done;
     }
 
@@ -71,4 +79,9 @@ public class TodoItem
     public DateTime getStartDate() {return startDate;}
 
     public void setStartDate(DateTime startDate) {this.startDate = startDate;}
+
+    public String getCalId() {return calId;}
+
+    public void setCalId(String calId) {this.calId = calId;}
+
 }

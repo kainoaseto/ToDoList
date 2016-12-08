@@ -7,13 +7,16 @@ import com.google.api.client.util.DateTime;
  */
 
 public class CalendarEvent {
+    private String id;
+
     private String title;
     private String description;
     private DateTime startDate;
     private DateTime endDate;
 
-    public CalendarEvent(String title, String description, DateTime startDate, DateTime endDate){
+    public CalendarEvent(String title, String id, String description, DateTime startDate, DateTime endDate){
         this.title = title;
+        this.id = id;
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -50,4 +53,8 @@ public class CalendarEvent {
     public void setendDate(DateTime endDate) {
         this.endDate = endDate;
     }
+
+    public String getId() {return id;}
+
+    public void setId(String id) {this.id = id;}
 }

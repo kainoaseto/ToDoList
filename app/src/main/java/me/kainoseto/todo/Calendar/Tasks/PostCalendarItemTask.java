@@ -15,8 +15,6 @@ import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventReminder;
 
-import org.apache.commons.codec.binary.Base32;
-
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -34,12 +32,11 @@ public class PostCalendarItemTask extends AsyncTask {
     private com.google.api.services.calendar.Calendar mService;
     private Exception mLastError;
     private Activity mActivity;
-    private Base32 base32 = new Base32(true);
     private CalendarAware mCalendarAware;
     private CalendarEvent mCalendarEvent;
 
     private static final String APP_NAME = "TodoList";
-    private static final String LOG_TAG = GetCalendarItemsTask.class.getCanonicalName();
+    private static final String LOG_TAG = PostCalendarItemTask.class.getCanonicalName();
     private String CALENDAR_NAME;
 
     public PostCalendarItemTask(GoogleAccountCredential credential, Activity activity, CalendarAware calendarAware, String calendarName, CalendarEvent calendarEvent){
@@ -76,7 +73,7 @@ public class PostCalendarItemTask extends AsyncTask {
 
             EventDateTime endDateTime = new EventDateTime().setDateTime(mCalendarEvent.getendDate());
             event.setEnd(endDateTime);
-            event.setId(StringUtil.formatCalendarItemId(mCalendarEvent.getTitle()));
+            event.setId(mCalendarEvent.getId());
 
             //TODO: Seting one hour warning, eventually needs configurable time
             EventReminder[] remindersOverides = new EventReminder[]{

@@ -184,6 +184,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     public void onGetCalendarItemsResult(List<CalendarEvent> events) {
         Log.d(LOG_TAG, "Received Calendar Items");
+        contentManager.syncWithCalendarEvents(events);
     }
 
     @Override
@@ -196,8 +197,16 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         Log.d(LOG_TAG, "Completed deleting a calendar item");
     }
 
+    @Override
+    public void onUpdateCalendarItemResult() {
+        Log.d(LOG_TAG, "Completed updating a calendar item");
+    }
+
     public void UpdateList()
     {
+        if(GoogleCalendarManager.isCalendarEnabled()){
+            calendarManager.getCalendarItems(this, this, calendarManager.getCalendarName());
+        }
         todoListView.setAdapter(listAdapter);
     }
 }

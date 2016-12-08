@@ -30,19 +30,19 @@ public class DeleteCalendarItemTask extends AsyncTask {
     private CalendarAware mCalendarAware;
 
     private static final String APP_NAME = "TodoList";
-    private static final String LOG_TAG = GetCalendarItemsTask.class.getCanonicalName();
+    private static final String LOG_TAG = DeleteCalendarItemTask.class.getCanonicalName();
     private String CALENDAR_NAME;
     private String mEventId;
 
-    public DeleteCalendarItemTask(GoogleAccountCredential credential, Activity activity, CalendarAware calendarAware, String calendarName, String title){
+    public DeleteCalendarItemTask(GoogleAccountCredential credential, Activity activity, CalendarAware calendarAware, String calendarName, String eventId){
         super();
         HttpTransport transport = AndroidHttp.newCompatibleTransport();
         JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
         mService = new com.google.api.services.calendar.Calendar.Builder(transport, jsonFactory, credential).setApplicationName(APP_NAME).build();
         mActivity = activity;
         mCalendarAware = calendarAware;
-        mEventId = StringUtil.formatCalendarItemId(title);
 
+        mEventId = eventId;
         CALENDAR_NAME = calendarName;
     }
 

@@ -24,4 +24,9 @@ public interface CalendarAware {
      * Called when DeleteCalendarItemTask finsishes deleting an item from a calendar
      */
     void onDeleteCalendarItemResult();
+
+    /**
+     * Called when UpdateCalendarItemTask finsishes updating an item on a calendar
+     */
+    void onUpdateCalendarItemResult();
 }

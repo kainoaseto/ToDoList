@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.google.api.client.util.DateTime;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -14,11 +15,16 @@ import java.util.List;
 
 import me.kainoseto.todo.Content.Subtask;
 import me.kainoseto.todo.Content.TodoItem;
+import me.kainoseto.todo.Util.DateTimeUtil;
+import me.kainoseto.todo.Util.StringUtil;
 
+import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_CAL_ID;
 import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_DESC;
 import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_DONE;
+import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_END_DATE;
 import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_ID;
 import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_NAME;
+import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_START_DATE;
 import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_SUBTASKS;
 import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.COLUMN_NAME_UI_IDX;
 import static me.kainoseto.todo.Database.TODOLIST_DB_COLUMNS.TABLE_NAME;
@@ -37,9 +43,12 @@ public class TodoDatabaseHandler extends DatabaseHelper
     private static final String[] FULL_PROJECTION = {
             COLUMN_NAME_ID,
             COLUMN_NAME_UI_IDX,
+            COLUMN_NAME_CAL_ID,
             COLUMN_NAME_NAME,
             COLUMN_NAME_DESC,
             COLUMN_NAME_SUBTASKS,
+            COLUMN_NAME_START_DATE,
+            COLUMN_NAME_END_DATE,
             COLUMN_NAME_DONE
     };
 
@@ -48,9 +57,12 @@ public class TodoDatabaseHandler extends DatabaseHelper
             "CREATE TABLE " + TABLE_NAME + "(" +
             COLUMN_NAME_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             COLUMN_NAME_UI_IDX + " INTEGER UNIQUE," +
+            COLUMN_NAME_CAL_ID + " TEXT, " +
             COLUMN_NAME_NAME + " TEXT, " +
             COLUMN_NAME_DESC + " TEXT, " +
             COLUMN_NAME_SUBTASKS + " TEXT, " +
+            COLUMN_NAME_START_DATE + " TEXT, " +
+            COLUMN_NAME_END_DATE + " TEXT, " +
             COLUMN_NAME_DONE + " INTEGER DEFAULT 0)";
 
     public TodoDatabaseHandler(Context context)
@@ -88,14 +100,17 @@ public class TodoDatabaseHandler extends DatabaseHelper
         onDowngrade(db, oldVersion, newVersion);
     }
 
-    public long addToDoItem(int uiIdx, String name, String desc, boolean done, List<Subtask> subtasks)
+    public long addToDoItem(int uiIdx, String calId, String name, String desc, boolean done, List<Subtask> subtasks, DateTime startDate, DateTime endDate)
     {
         String subtasksJson = gson.toJson(subtasks, subtaskType);
 
         ContentValues item = new ContentValues();
         item.put(COLUMN_NAME_UI_IDX, uiIdx);
-        item.put(COLUMN_NAME_NAME, name);
-        item.put(COLUMN_NAME_DESC, desc);
+        item.put(COLUMN_NAME_CAL_ID, StringUtil.catchNullString(calId));
+        item.put(COLUMN_NAME_NAME, StringUtil.catchNullString(name));
+        item.put(COLUMN_NAME_DESC, StringUtil.catchNullString(desc));
+        item.put(COLUMN_NAME_START_DATE, DateTimeUtil.safeToStringRfc3339(startDate));
+        item.put(COLUMN_NAME_END_DATE, DateTimeUtil.safeToStringRfc3339(endDate));
         item.put(COLUMN_NAME_SUBTASKS, subtasksJson);
         item.put(COLUMN_NAME_DONE, done);
 
@@ -158,9 +173,12 @@ public class TodoDatabaseHandler extends DatabaseHelper
             TodoItem newItem = new TodoItem(
                     item.getAsInteger(COLUMN_NAME_ID),
                     item.getAsInteger(COLUMN_NAME_UI_IDX),
+                    item.getAsString(COLUMN_NAME_CAL_ID),
                     item.getAsString(COLUMN_NAME_NAME),
                     item.getAsString(COLUMN_NAME_DESC),
                     gson.fromJson(item.getAsString(COLUMN_NAME_SUBTASKS), subtaskType),
+                    DateTimeUtil.safeParseRfc3339(item.getAsString(COLUMN_NAME_START_DATE)),
+                    DateTimeUtil.safeParseRfc3339(item.getAsString(COLUMN_NAME_END_DATE)),
                     item.getAsBoolean(COLUMN_NAME_DONE)
             );
             items.add(newItem);

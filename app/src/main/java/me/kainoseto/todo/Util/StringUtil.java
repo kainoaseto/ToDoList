@@ -30,6 +30,13 @@ public class StringUtil {
         }
     }
 
+    public static String catchNullString(String string){
+        if (null != string){
+            return string;
+        }
+        return "";
+    }
+
     //TODO: Add method to generate description that contains subtasks
 
 }
