@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity
             public void onClick(View v) {
                 Intent settingsViewIntent = new Intent(getApplicationContext(), SettingsActivity.class);
                 startActivityForResult(settingsViewIntent, SETTINGS_INTENT_RESULT_KEY);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
