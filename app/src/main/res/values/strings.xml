@@ -15,18 +15,24 @@
     <string name="intent_create_item">todo_create_new_item</string>
 
     <!-- Strings related to Settings -->
+    <string name="pref_general_settings_title">General</string>
+    <string name="pref_gcal_settings_title">Google Calendar</string>
 
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
+    <!-- General settings -->
     <string name="pref_title_light_theme">Enable Light Theme</string>
-    <string name="pref_description_light_theme">Turns on the light theme for the app
-    </string>
+    <string name="pref_description_light_theme">Turns on the light theme for the app</string>
 
     <string name="pref_title_list_name">List Name</string>
     <string name="pref_default_list_name">ToDo</string>
 
     <string name="pref_title_reset">Reset Application</string>
+
+    <!-- GCal settings -->
+    <string name="pref_enable_gcal">Enable Google Calendar Sync</string>
+    <string name="pref_calendar_name">Google Calendar Name</string>
+    <string name="pref_enable_gcal_summary">Sync the last week of Google calendar events with this app and all future ToDo items</string>
+    <string name="pref_calendar_name_summary">Google calendar name to sync from that is associated with the logged in account</string>
+    <string name="pref_default_calendar_name">primary</string>
     <!--<string-array name="pref_example_list_titles">
         <item>Always</item>
         <item>When possible</item>
