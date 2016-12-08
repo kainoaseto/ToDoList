@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        calendarManager.handleOnActivityResult(requestCode, resultCode, data, this, false);
+        //calendarManager.handleOnActivityResult(requestCode, resultCode, data, this, false);
     }
 
     /**

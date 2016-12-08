@@ -43,6 +43,86 @@
         android:layout_weight="0.38"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
+    <TableLayout
+        android:id="@+id/itemview_datetimes"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:stretchColumns="0,1" >
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/itemview_fromdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start Date:"
+                android:textSize="18sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/itemview_start_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NULL"
+                android:textSize="18sp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/itemview_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NULL"
+                android:textSize="18sp"
+                android:layout_gravity="center"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/itemview_enddate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End Date:"
+                android:textSize="18sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/itemview_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NULL"
+                android:textSize="18sp"
+                android:layout_gravity="center" />
+            <TextView
+                android:id="@+id/itemview_end_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NULL"
+                android:textSize="18sp"
+                android:layout_gravity="center" />
+
+        </TableRow>
+
+    </TableLayout>
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

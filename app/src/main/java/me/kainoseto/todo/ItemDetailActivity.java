@@ -22,6 +22,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import me.kainoseto.todo.Content.TodoContentManager;
 import me.kainoseto.todo.Content.TodoItem;
@@ -35,6 +37,10 @@ public class ItemDetailActivity extends AppCompatActivity {
     private TextView descriptionView;
     private Switch doneView;
     private RecyclerView subtaskRecyclerView;
+    private TextView startDateText;
+    private TextView startTimeText;
+    private TextView endDateText;
+    private TextView endTimeText;
 
     private String name;
     private String description;
@@ -51,12 +57,8 @@ public class ItemDetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        if(MainActivity.preferencesManager.getSharedPref().getBoolean(PreferencesManager.KEY_THEME, false)) {
-            setTheme(R.style.LightTheme_NoActionBar);
-        } else {
-            setTheme(R.style.DarkTheme_NoActionBar);
-        }
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
 
@@ -78,6 +80,11 @@ public class ItemDetailActivity extends AppCompatActivity {
         name            = currentItem.getName();
         description     = currentItem.getDescription();
         done            = currentItem.isDone();
+
+        startDateText           = (TextView) findViewById(R.id.itemview_start_date);
+        startTimeText           = (TextView) findViewById(R.id.itemview_start_time);
+        endDateText             = (TextView) findViewById(R.id.itemview_end_date);
+        endTimeText             = (TextView) findViewById(R.id.itemview_end_time);
 
         nameView.setText(name);
         descriptionView.setText(description);
@@ -171,6 +178,17 @@ public class ItemDetailActivity extends AppCompatActivity {
         name            = currentItem.getName();
         description     = currentItem.getDescription();
         done            = currentItem.isDone();
+        Date startDate  = new Date(currentItem.getStartDate().getValue());
+        Date endDate    =  new Date(currentItem.getEndDate().getValue());
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startDate);
+        startDateText.setText(generateDateString(cal));
+        startTimeText.setText(generateTimeString(cal));
+
+        cal.setTime(endDate);
+        endDateText.setText(generateDateString(cal));
+        endTimeText.setText(generateTimeString(cal));
 
         nameView.setText(name);
         descriptionView.setText(description);
@@ -182,5 +200,17 @@ public class ItemDetailActivity extends AppCompatActivity {
         subtaskListAdapter = new SubtaskListAdapter(this, uiIdx);
         subtaskRecyclerView.setAdapter(subtaskListAdapter);
 
+    }
+
+    private String generateDateString(Calendar cal){
+        StringBuilder startDateStr = new StringBuilder();
+        startDateStr.append(cal.get(Calendar.MONTH)).append("/").append(cal.get(Calendar.DAY_OF_MONTH)).append("/").append(Calendar.YEAR);
+        return startDateStr.toString();
+    }
+
+    private String generateTimeString(Calendar cal){
+        StringBuilder startTimeStr = new StringBuilder();
+        startTimeStr.append(cal.get(Calendar.HOUR_OF_DAY)).append(":").append(cal.get(Calendar.MINUTE));
+        return startTimeStr.toString();
     }
 }

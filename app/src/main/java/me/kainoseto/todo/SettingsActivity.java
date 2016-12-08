@@ -211,7 +211,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     if(sharedPreferences.getBoolean(preference.getKey(), false)){
-                        calendarManager.checkGoogleCalendarRequirements(getActivity());
+                        //calendarManager.checkGoogleCalendarRequirements(getActivity());
                     }
                     return false;
                 }

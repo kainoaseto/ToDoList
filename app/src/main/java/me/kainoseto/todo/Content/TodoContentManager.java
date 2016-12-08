@@ -94,7 +94,7 @@ public class TodoContentManager implements ContentManager
     }
 
     @Override
-    public boolean addTodoItem(String name, String calId, String desc, List<Subtask> subtasks, boolean done, DateTime startDate, DateTime endDate)
+    public boolean addTodoItem(String name, String calId, String desc, List<Subtask> subtasks, boolean done, DateTime startDate, DateTime endDate, boolean updateGoogleCal)
     {
         int uiIdx = getSize();
 
@@ -104,7 +104,7 @@ public class TodoContentManager implements ContentManager
 
         todoItems.add(uiIdx, new TodoItem(new BigDecimal(rowId).intValueExact(), uiIdx, calId, name, desc, subtasks, startDate, endDate, done));
 
-        if(GoogleCalendarManager.isCalendarEnabled()){
+        if(GoogleCalendarManager.isCalendarEnabled() && updateGoogleCal){
             if(null == calendarManager){
                 calendarManager = GoogleCalendarManager.getInstance(activity);
             }
@@ -229,7 +229,7 @@ public class TodoContentManager implements ContentManager
     public void syncWithCalendarEvents(List<CalendarEvent> events) {
         for(CalendarEvent event : events){
             if(!todoListContainsTitle(event.getTitle())){
-                addTodoItem(event.getTitle(), event.getId(), event.getDescription(), new ArrayList(), false, event.getStartDate(), event.getendDate());
+                addTodoItem(event.getTitle(), event.getId(), event.getDescription(), new ArrayList(), false, event.getStartDate(), event.getendDate(), false);
             }
         }
     }

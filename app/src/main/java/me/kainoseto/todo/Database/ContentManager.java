@@ -15,7 +15,7 @@ import me.kainoseto.todo.Content.TodoItem;
 public interface ContentManager {
     void refreshContent();
     void resetContent();
-    boolean addTodoItem(String name, String calId, String desc, List<Subtask> subtasks, boolean done, DateTime startDate, DateTime endDate);
+    boolean addTodoItem(String name, String calId, String desc, List<Subtask> subtasks, boolean done, DateTime startDate, DateTime endDate, boolean updateGoogleCal);
     void removeTodoItem(int uiIdx);
     TodoItem getTodoItem(int uiIdx);
     int getSize();

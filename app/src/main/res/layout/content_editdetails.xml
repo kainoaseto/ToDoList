@@ -36,13 +36,113 @@
         android:hint="@string/item_desc"
         android:gravity="bottom" />
 
+    <CheckBox
+        android:text="@string/edit_item_enable_datetimes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editview_setdatetimes"
+        android:layout_weight="0.04"
+        android:ems="10"
+        android:textSize="18sp" />
+
+    <CheckBox
+        android:text="@string/edit_item_enable_gcalsync"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editview_enablegcalsync"
+        android:layout_weight="0.04"
+        android:ems="10"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+    <TableLayout
+        android:id="@+id/editview_datetimes"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:stretchColumns="0,1" >
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/itemview_fromdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Start Date:"
+                android:textSize="18sp" />
+        </TableRow>
+
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="20dp">
+
+            <TextView
+                android:id="@+id/editview_start_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NULL"
+                android:textSize="18sp"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/editview_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NULL"
+                android:textSize="18sp"
+                android:layout_gravity="center"/>
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:id="@+id/itemview_enddate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="End Date:"
+                android:textSize="18sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/editview_end_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NULL"
+                android:textSize="18sp"
+                android:layout_gravity="center" />
+            <TextView
+                android:id="@+id/editview_end_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NULL"
+                android:textSize="18sp"
+                android:layout_gravity="center" />
+
+        </TableRow>
+
+    </TableLayout>
+
     <Switch
         android:text="@string/item_done"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/switch_done"
         android:layout_weight="0.08"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:layout_marginTop="10dp"/>
 
     <Space
         android:layout_width="match_parent"
@@ -94,7 +194,9 @@
             android:id="@+id/btn_add_subtask"/>
     </LinearLayout>
 
-    <View style="@style/Divider"/>
+    <View style="@style/Divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
@@ -102,6 +204,8 @@
         android:id="@+id/recycler_edit_subtasks"
         android:scrollbars="vertical" />
 
-    <View style="@style/Divider"/>
+    <View style="@style/Divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
 
 </LinearLayout>
