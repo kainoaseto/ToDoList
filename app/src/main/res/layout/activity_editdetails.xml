@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/activity_edit_detail"
-    tools:context="me.kainoseto.todo.EditItemDetailActivity"
+    tools:context="co.xelabs.todo.EditItemDetailActivity"
     android:background="@color/windowBackground">
 
     <android.support.design.widget.AppBarLayout
