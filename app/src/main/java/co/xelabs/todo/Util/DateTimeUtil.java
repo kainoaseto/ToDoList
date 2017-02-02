@@ -26,7 +26,7 @@ public class DateTimeUtil {
 
     /**
      * Returns a DateTime object with the current time. Mostly used for debugging
-     *
+     * Does some other new stuff
      * @return
      */
     public static DateTime currTime(){
