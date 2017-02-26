@@ -399,9 +399,19 @@ public class EditItemDetailActivity extends AppCompatActivity
     private boolean UpdateDB() {
         if(!nameEditText.getText().toString().equals(""))
         {
+            boolean dateTimeEnabled = enableDateTimeCheckBox.isChecked();
+
             if(isNewItem)
             {
-                contentManager.addTodoItem(nameEditText.getText().toString(), StringUtil.formatCalendarItemId(nameEditText.getText().toString()), descEditText.getText().toString(), subtaskListAdapter.getTmpSubtasks(), doneSwitch.isChecked(), startListener.getDateTime(), endListener.getDateTime(), enableGoogleCalSyncCheckBox.isChecked());
+                contentManager.addTodoItem(
+                        nameEditText.getText().toString(),
+                        StringUtil.formatCalendarItemId(nameEditText.getText().toString()),
+                        descEditText.getText().toString(), subtaskListAdapter.getTmpSubtasks(),
+                        doneSwitch.isChecked(),
+                        dateTimeEnabled ? startListener.getDateTime() : null,
+                        dateTimeEnabled ? endListener.getDateTime() : null,
+                        enableGoogleCalSyncCheckBox.isChecked()
+                );
             }
             else
             {
@@ -412,8 +422,8 @@ public class EditItemDetailActivity extends AppCompatActivity
                 contentManager.setDesc(uiIdx, descEditText.getText().toString(), updateGcal);
                 contentManager.setSubtasks(uiIdx, subtaskListAdapter.getTmpSubtasks());
                 contentManager.setDone(uiIdx, doneSwitch.isChecked());
-                contentManager.setStartDate(uiIdx, startListener.getDateTime(), updateGcal);
-                contentManager.setEndDate(uiIdx, endListener.getDateTime(), updateGcal);
+                contentManager.setStartDate(uiIdx, dateTimeEnabled ? startListener.getDateTime() : null, updateGcal);
+                contentManager.setEndDate(uiIdx, dateTimeEnabled ? endListener.getDateTime() : null, updateGcal);
             }
         }
         else {

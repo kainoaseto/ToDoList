@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,7 +8,8 @@
     android:fitsSystemWindows="true"
     android:id="@+id/activity_edit_detail"
     tools:context="co.xelabs.todo.EditItemDetailActivity"
-    android:background="@color/windowBackground">
+    android:background="@color/windowBackground"
+    android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
         android:layout_height="wrap_content"
@@ -37,7 +38,13 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_editdetails"
-        android:id="@+id/include" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-</android.support.design.widget.CoordinatorLayout>
+        <include layout="@layout/content_editdetails"
+            android:id="@+id/include" />
+    </ScrollView>
+
+
+</LinearLayout>

@@ -66,7 +66,6 @@ public class ItemDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
 
-
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         nameView = (TextView) findViewById(R.id.text_name);
@@ -110,6 +109,10 @@ public class ItemDetailActivity extends AppCompatActivity {
 
             endDateText.setText(dateFormat.format(endDate));
             endTimeText.setText(timeFormat.format(endDate));
+        }
+        else
+        {
+            dateTimesLayout.setVisibility(View.GONE);
         }
 
         nameView.setText(name);
@@ -220,6 +223,10 @@ public class ItemDetailActivity extends AppCompatActivity {
 
             endDateText.setText(dateFormat.format(endDate));
             endTimeText.setText(timeFormat.format(endDate));
+        }
+        else
+        {
+            dateTimesLayout.setVisibility(View.GONE);
         }
 
         nameView.setText(name);
